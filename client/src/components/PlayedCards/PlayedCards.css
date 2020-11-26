@@ -1,0 +1,12 @@
+.played-card {
+  height: 300px;
+  width: 210px;
+  border-radius: 20px;
+  border: dashed 5px rgb(255, 225, 225);
+  padding: 15px;
+}
+
+#card-bar {
+  position: fixed;
+  bottom: 0;
+}

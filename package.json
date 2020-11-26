@@ -1,0 +1,22 @@
+{
+  "name": "card-jitsu",
+  "version": "1.0.0",
+  "description": "reimagining of club penguin's classic card-jitsu game",
+  "main": "server.js",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "mongodb": "^3.6.0",
+    "mongoose": "^5.9.27",
+    "validator": "^13.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "wendy guo",
+  "license": "ISC"
+}
