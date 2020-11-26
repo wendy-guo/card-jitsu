@@ -3,11 +3,7 @@ import "./App.css";
 import CardBar from "./components/CardBar";
 import PlayedCards from "./components/PlayedCards";
 
-const test_backend = () => {
-  console.log("hallooooo");
-
-  console.log("umm");
-
+const getNewCard = () => {
   const url = "/new-card";
   fetch(url)
     .then((res) => {
@@ -18,6 +14,7 @@ const test_backend = () => {
     .then((json) => {
       console.log("yay a card");
       console.log(json);
+      return json;
     })
     .catch((error) => {
       console.log(error);
@@ -58,7 +55,8 @@ const getOpponentCard = () => {
 function App() {
   // at the beginning of the game, make api call to get starting cards for player
 
-  test_backend();
+  var card = getNewCard();
+  console.log(card.type);
 
   const [playerCards, setPlayerCards] = useState([
     { type: "water", number: 5, colour: "rgb(197, 27, 56)" },
