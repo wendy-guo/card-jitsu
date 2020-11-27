@@ -14,7 +14,33 @@ const startMatch = () => {
     },
   });
 
-  return fetch(request, { mode: "cors" })
+  return fetch(request)
+    .then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      }
+    })
+    .then((json) => {
+      return json;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+const getOpponentCard = (match_id) => {
+  const request = new Request("/opponent-card", {
+    method: "post",
+    body: JSON.stringify({ match_id }),
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    },
+  });
+
+  console.log("getting opponent move...");
+
+  return fetch(request)
     .then((res) => {
       if (res.status === 200) {
         console.log(res);
@@ -22,14 +48,41 @@ const startMatch = () => {
       }
     })
     .then((json) => {
-      console.log("yay a match");
-      console.log(json);
+      console.log("opponeent's card", json);
       return json;
     })
     .catch((error) => {
       console.log(error);
     });
 };
+
+const getRoundResults = (player, opponent) => {
+  const request = new Request("/opponent-card", {
+    method: "post",
+    body: JSON.stringify({ match_id }),
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    },
+  });
+
+  console.log("getting opponent move...");
+
+  return fetch(request)
+    .then((res) => {
+      if (res.status === 200) {
+        console.log(res);
+        return res.json();
+      }
+    })
+    .then((json) => {
+      console.log("opponeent's card", json);
+      return json;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 // pass with global context?
 const colours = [
@@ -54,37 +107,53 @@ var opponentCards = [
   { type: "fire", number: 7, colour: "rgb(197, 27, 56)" },
 ];
 
-const setOpponentCards = () => {
-  // make requeeset to backend for generating opponent card
-};
-
-const getOpponentCard = () => {
-  // make requeeset to backend for opponent card
-};
-
 function App() {
   // at the beginning of the game, make api call to get starting cards for player
 
   const [match, setMatch] = useState(null);
-  const [opponentPlayedCard, setOpponentPlayedCard] = useState({
-    type: "water",
-    number: 5,
-    colour: "rgb(197, 27, 56)",
-  });
+  const [opponentPlayedCard, setOpponentPlayedCard] = useState(null);
   const [playerPlayedCard, setPlayerPlayedCard] = useState(null);
+  const [playable, setPlayable] = useState(true);
+  const [playableOp, setPlayableOp] = useState(true);
+  const [roundResult, setRoundResult] = useState(null);
 
   const [gameStarted, setGameStarted] = useState(false);
   const [newGame, setNewGame] = useState(true);
 
-  if (gameStarted && newGame) {
-    setNewGame(false);
-    startMatch().then((match) => {
-      console.log("hai", match._id);
-      setMatch(match);
-    });
-  } else if (gameStarted) {
-    console.log("game has started");
-  }
+  const setUpCards = () => {
+    if (gameStarted && newGame) {
+      setNewGame(false);
+      startMatch().then((match) => {
+        console.log("hai", match._id);
+        setMatch(match);
+      });
+    } else if (gameStarted) {
+    }
+  };
+
+  const getOpponentMove = (match) => {
+    if (match && playableOp) {
+      setPlayableOp(false);
+      getOpponentCard(match).then((card) => {
+        setOpponentPlayedCard(card);
+        console.log(card);
+      });
+    }
+  };
+
+  const evaluateRound = () => {
+    if (playerPlayedCard && opponentPlayedCard) {
+      getRoundResults(playerPlayedCard, opponentPlayedCard).then((result) => {
+        setRoundResult(result);
+        setPlayerPlayedCard(null);
+        setOpponentPlayedCard(null);
+      });
+    }
+  };
+
+  setUpCards();
+  getOpponentMove(match);
+  evaluateRound();
 
   return (
     <div className="App">
@@ -92,12 +161,25 @@ function App() {
       {match ? (
         <div>
           play a card
+          {roundResult ? (
+            <div>hallo</div>
+          ) : (
+            <PlayedCards
+              id="played-cards"
+              playerCard={playerPlayedCard}
+              opponentCard={opponentPlayedCard}
+            />
+          )}
           <CardBar
             id="card-bar"
             cards={match.playerCards}
+            playable={playable}
             onCardClick={(index) => {
-              setPlayerPlayedCard(match.playerCards[index]);
-              console.log(index, "clicked");
+              if (playable) {
+                setPlayerPlayedCard(match.playerCards[index]);
+                setPlayable(false);
+                console.log(index, "clicked");
+              }
             }}
           />
         </div>
