@@ -81,28 +81,33 @@ app.get("/deal-cards", (req, res) => {
     res.status(500).send("internal server error");
     return;
   }
-  for(let i = 0; i < req.body.num_cards; i++){
-    
-  }
-  const card = new Card({
-    type: card_types[Math.floor(Math.random() * 3)],
-    number: Math.floor(Math.random() * 11) + 2,
-    colour: card_colours[Math.floor(Math.random() * 6)],
-  });
 
-  card
-    .save()
-    .then((result) => {
-      res.send(result);
-      console.log(result);
+  Match.findById(req.body.match_id)
+    .then((match) => {
+      if (!match) {
+        res.status(404).send("Resource not found");
+      } else {
+        for (let i = 0; i < req.body.num_cards; i++) {
+          match.playerCards.push(generateNewCard());
+          match.opponentCards.push(generateNewCard());
+        }
+
+        match
+          .save()
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((error) => {
+            if (isMongoError(error)) {
+              res.status(500).send("Internal server error");
+            } else {
+              res.status(400).send("Bad Request");
+            }
+          });
+      }
     })
     .catch((error) => {
-      if (isMongoError(error)) {
-        res.status(500).send("Internal server error");
-      } else {
-        console.log(error);
-        res.status(400).send("Bad Request");
-      }
+      res.status(500).send("Internal Server Error");
     });
 });
 
