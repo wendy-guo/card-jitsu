@@ -38,6 +38,22 @@ function getOpponentMove(cards) {
   return Math.floor(Math.random() * cards.length);
 }
 
+function getResult(player, opponent) {
+  if (player.type == opponent.type) {
+    return player.number > opponent.type
+      ? "player"
+      : player.number < opponent.number
+      ? "opponent"
+      : "tie";
+  } else if (player.type == "snow") {
+    return opponent.type == "water" ? "player" : "opponent";
+  } else if (player.type == "water") {
+    return opponent.type == "fire" ? "player" : "opponent";
+  } else {
+    return opponent.type == "snow" ? "player" : "opponent";
+  }
+}
+
 app.use(
   session({
     secret: "oursecret",
@@ -72,8 +88,8 @@ app.post("/start-match", (req, res) => {
     player: req.body.player,
     playerCards,
     opponentCards,
-    playerStacks: [],
-    opponentStacks: [],
+    playerStacks: new Stack(),
+    opponentStacks: new Stack(),
     winner: null,
   });
 
@@ -107,7 +123,7 @@ app.post("/opponent-card", (req, res) => {
         var card = match.opponentCards.pop(
           getOpponentMove(match.opponentCards)
         );
-          console.log("opponent card", card);
+        console.log("opponent card", card);
         match
           .save()
           .then(() => {
@@ -151,6 +167,54 @@ app.post("/play-card", (req, res) => {
           .catch((error) => {
             if (isMongoError(error)) {
               res.status(500).send("internal server error");
+            } else {
+              res.status(400).send("bad request");
+            }
+          });
+      }
+    })
+    .catch((error) => {
+      res.status(500).send("internal server error");
+    });
+});
+
+/**
+ * Get and store the winner of the round.
+ */
+app.post("/get-round-result", (req, res) => {
+  if (mongoose.connection.readyState != 1) {
+    console.log("issue with mongoose connection");
+    res.status(500).send("internal server error");
+    return;
+  }
+
+  var result = getResult(req.body.player, req.body.opponent);
+  console.log("result!!!!!!!!!!!!!!!!", result);
+
+  Match.findById(req.body.match_id)
+    .then((match) => {
+      if (!match) {
+        res.status(404).send("resource not found");
+      } else {
+        
+        if (result == "player") {
+          match.playerStack[req.body.player.type].push(req.body.player.colour);
+        } else if (result == "opponents") {
+          match.opponentStack[req.body.opponent.type].push(
+            req.body.opponent.colour
+          );
+        }
+
+        console.log("resultyyyyyyy", result);
+
+        match
+          .save()
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((error) => {
+            if (isMongoError(error)) {
+              res.status(500).send("internal server error :(");
             } else {
               res.status(400).send("bad request");
             }
