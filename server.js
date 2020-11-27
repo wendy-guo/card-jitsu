@@ -6,8 +6,8 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
 const { mongoose } = require("./db/mongoose");
-const { Card } = require("./models/card");
 const { Match } = require("./models/match");
+const { Card } = require("./models/card");
 const { Stack } = require("./models/stack");
 const { User } = require("./models/user");
 
@@ -23,6 +23,14 @@ function isMongoError(error) {
     error !== null &&
     error.name === "MongoNetworkError"
   );
+}
+
+function generateNewCard() {
+  return new Card({
+    type: card_types[Math.floor(Math.random() * 3)],
+    number: Math.floor(Math.random() * 11) + 2,
+    colour: card_colours[Math.floor(Math.random() * 6)],
+  });
 }
 
 app.use(
@@ -47,14 +55,26 @@ app.post("/start-match", (req, res) => {
     return;
   }
 
+  console.log("starting a match...");
+
+  var playerCards = [];
+  var opponentCards = [];
+
+  for (let i = 0; i < 5; i++){
+    playerCards.push(generateNewCard());
+    opponentCards.push(generateNewCard());
+  }
+
   const match = new Match({
     player: req.body.player,
-    playerCards: [],
-    opponentCards: [],
+    playerCards,
+    opponentCards,
     playerStacks: [],
     opponentStacks: [],
     winner: null,
   });
+
+  console.log(match);
 
   match
     .save()
