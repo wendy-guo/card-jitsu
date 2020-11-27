@@ -2,17 +2,27 @@ import React, { useState } from "react";
 import "./App.css";
 import CardBar from "./components/CardBar";
 import PlayedCards from "./components/PlayedCards";
+import Card from "./components/Card";
 
-const getNewCard = () => {
-  const url = "/new-card";
-  fetch(url)
+const startMatch = () => {
+  const request = new Request("/start-match", {
+    method: "post",
+    body: JSON.stringify({ player: "wendy" }),
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    },
+  });
+
+  return fetch(request, { mode: "cors" })
     .then((res) => {
       if (res.status === 200) {
+        console.log(res);
         return res.json();
       }
     })
     .then((json) => {
-      console.log("yay a card");
+      console.log("yay a match");
       console.log(json);
       return json;
     })
@@ -55,16 +65,7 @@ const getOpponentCard = () => {
 function App() {
   // at the beginning of the game, make api call to get starting cards for player
 
-  var card = getNewCard();
-  console.log(card.type);
-
-  const [playerCards, setPlayerCards] = useState([
-    { type: "water", number: 5, colour: "rgb(197, 27, 56)" },
-    { type: "water", number: 3, colour: "rgb(161, 231, 236)" },
-    { type: "fire", number: 9, colour: "rgb(255, 236, 127)" },
-    { type: "grass", number: 4, colour: "rgb(197, 27, 56)" },
-    { type: "fire", number: 7, colour: "rgb(197, 27, 56)" },
-  ]);
+  const [match, setMatch] = useState(null);
   const [opponentPlayedCard, setOpponentPlayedCard] = useState({
     type: "water",
     number: 5,
@@ -73,18 +74,42 @@ function App() {
   const [playerPlayedCard, setPlayerPlayedCard] = useState(null);
 
   const [gameStarted, setGameStarted] = useState(false);
-  const [newGame, setNewGame] = useState(false);
+  const [newGame, setNewGame] = useState(true);
 
-  if (newGame) {
-    setTimeout(1000, setOpponentCards());
+  if (gameStarted && newGame) {
+    setNewGame(false);
+    startMatch().then((match) => {
+      console.log("hai", match._id);
+      setMatch(match);
+    });
   } else if (gameStarted) {
-    setTimeout(1000, getOpponentCard());
+    console.log("game has started");
   }
 
   return (
     <div className="App">
       hallo world
-      <PlayedCards
+      {match ? (
+        <div>
+          play a card
+          <CardBar
+            id="card-bar"
+            cards={match.playerCards}
+            onCardClick={(index) => {
+              setPlayerPlayedCard(match.playerCards[index]);
+              console.log(index, "clicked");
+            }}
+          />
+        </div>
+      ) : (
+        <button onClick={() => setGameStarted(true)}>start game</button>
+      )}
+    </div>
+  );
+}
+
+/**
+  <PlayedCards
         id="played-cards"
         playerCard={playerPlayedCard}
         opponentCard={opponentPlayedCard}
@@ -97,8 +122,6 @@ function App() {
           console.log(index, "clicked");
         }}
       />
-    </div>
-  );
-}
+ */
 
 export default App;
