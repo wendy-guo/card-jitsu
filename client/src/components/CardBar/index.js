@@ -11,7 +11,7 @@ var myCards = [
 
 function CardBar(props) {
   return (
-    <div className="card-bar">
+    <div className={props.playable ? "card-bar playable" : "card-bar"}>
       {props.cards.map((card, i) => (
         <Card
           index={i}
