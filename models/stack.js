@@ -3,9 +3,10 @@
 const mongoose = require("mongoose");
 
 const StackSchema = new mongoose.Schema({
-  type: String,
-  colours: [String]
+  snow: [String],
+  water: [String],
+  fire: [String]
 });
 
 const Stack = mongoose.model("Stack", StackSchema);
-module.exports = { Stack };
+module.exports = { Stack, StackSchema };
