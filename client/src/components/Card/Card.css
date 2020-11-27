@@ -3,8 +3,3 @@
   border-radius: 15px;
   margin: auto;
 }
-
-.card:hover {
-  transform: scale(1.01);
-  transform-origin: center;
-}

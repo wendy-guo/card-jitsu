@@ -6,3 +6,8 @@
   height: 300px;
   justify-content: flex-start;
 }
+
+.playable div:hover {
+  transform: scale(1.01);
+  transform-origin: center;
+}
