@@ -56,33 +56,34 @@ const getOpponentCard = (match_id) => {
     });
 };
 
-const getRoundResults = (player, opponent) => {
-  const request = new Request("/opponent-card", {
+const getRoundResults = (match_id, player, opponent) => {
+
+  const request = new Request("/get-round-result", {
     method: "post",
-    body: JSON.stringify({ match_id }),
+    body: JSON.stringify({ match_id, player, opponent }),
     headers: {
       Accept: "application/json, text/plain, */*",
       "Content-Type": "application/json",
     },
   });
 
-  console.log("getting opponent move...");
+  console.log("storing and checking round results");
 
   return fetch(request)
     .then((res) => {
       if (res.status === 200) {
-        console.log(res);
         return res.json();
       }
     })
     .then((json) => {
-      console.log("opponeent's card", json);
+      console.log("round result", json);
       return json;
     })
     .catch((error) => {
+      console.log("huhhhhhhhhhhhhhhhh");
       console.log(error);
     });
-}
+};
 
 // pass with global context?
 const colours = [
@@ -143,11 +144,15 @@ function App() {
 
   const evaluateRound = () => {
     if (playerPlayedCard && opponentPlayedCard) {
-      getRoundResults(playerPlayedCard, opponentPlayedCard).then((result) => {
-        setRoundResult(result);
-        setPlayerPlayedCard(null);
-        setOpponentPlayedCard(null);
-      });
+      console.log("NOT NULL!!!!!", playerPlayedCard, opponentPlayedCard);
+      getRoundResults(match, playerPlayedCard, opponentPlayedCard).then(
+        (result) => {
+          setRoundResult(result);
+          console.log("------------ round result:", result);
+          setPlayerPlayedCard(null);
+          setOpponentPlayedCard(null);
+        }
+      );
     }
   };
 
