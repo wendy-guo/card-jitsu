@@ -33,6 +33,11 @@ function generateNewCard() {
   });
 }
 
+function getOpponentMove(cards) {
+  console.log("opponent move");
+  return Math.floor(Math.random() * cards.length);
+}
+
 app.use(
   session({
     secret: "oursecret",
@@ -55,12 +60,10 @@ app.post("/start-match", (req, res) => {
     return;
   }
 
-  console.log("starting a match...");
-
   var playerCards = [];
   var opponentCards = [];
 
-  for (let i = 0; i < 5; i++){
+  for (let i = 0; i < 5; i++) {
     playerCards.push(generateNewCard());
     opponentCards.push(generateNewCard());
   }
@@ -74,17 +77,14 @@ app.post("/start-match", (req, res) => {
     winner: null,
   });
 
-  console.log(match);
-
   match
     .save()
     .then((result) => {
       res.send(result);
-      console.log(result._id);
     })
     .catch((error) => {
       if (isMongoError(error)) {
-        res.status(500).send("Internal server error");
+        res.status(500).send("internal server error");
       } else {
         console.log(error);
         res.status(400).send("Bad Request");
@@ -92,10 +92,7 @@ app.post("/start-match", (req, res) => {
     });
 });
 
-/**
- * Generate a new card for a player and return it.
- */
-app.get("/deal-cards", (req, res) => {
+app.post("/opponent-card", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
     res.status(500).send("internal server error");
@@ -105,12 +102,83 @@ app.get("/deal-cards", (req, res) => {
   Match.findById(req.body.match_id)
     .then((match) => {
       if (!match) {
-        res.status(404).send("Resource not found");
+        res.status(404).send("resource not found");
       } else {
-        for (let i = 0; i < req.body.num_cards; i++) {
-          match.playerCards.push(generateNewCard());
-          match.opponentCards.push(generateNewCard());
-        }
+        var card = match.opponentCards.pop(
+          getOpponentMove(match.opponentCards)
+        );
+          console.log("opponent card", card);
+        match
+          .save()
+          .then(() => {
+            res.send(card);
+          })
+          .catch((error) => {
+            if (isMongoError(error)) {
+              res.status(500).send("internal server error");
+            } else {
+              res.status(400).send("bad request");
+            }
+          });
+      }
+    })
+    .catch((error) => {
+      res.status(500).send("internal server error");
+    });
+});
+
+/**
+ * Plays the card the player chooses.
+ */
+app.post("/play-card", (req, res) => {
+  if (mongoose.connection.readyState != 1) {
+    console.log("issue with mongoose connection");
+    res.status(500).send("internal server error");
+    return;
+  }
+
+  Match.findById(req.body.match_id)
+    .then((match) => {
+      if (!match) {
+        res.status(404).send("resource not found");
+      } else {
+        match.playerCards.pop(req.body.index);
+        match
+          .save()
+          .then((result) => {
+            res.send(result);
+          })
+          .catch((error) => {
+            if (isMongoError(error)) {
+              res.status(500).send("internal server error");
+            } else {
+              res.status(400).send("bad request");
+            }
+          });
+      }
+    })
+    .catch((error) => {
+      res.status(500).send("internal server error");
+    });
+});
+
+/**
+ * Generate and return new cards for the players of a match.
+ */
+app.get("/deal-card", (req, res) => {
+  if (mongoose.connection.readyState != 1) {
+    console.log("issue with mongoose connection");
+    res.status(500).send("internal server error");
+    return;
+  }
+
+  Match.findById(req.body.match_id)
+    .then((match) => {
+      if (!match) {
+        res.status(404).send("resource not found");
+      } else {
+        match.playerCards.push(generateNewCard());
+        match.opponentCards.push(generateNewCard());
 
         match
           .save()
@@ -119,7 +187,7 @@ app.get("/deal-cards", (req, res) => {
           })
           .catch((error) => {
             if (isMongoError(error)) {
-              res.status(500).send("Internal server error");
+              res.status(500).send("internal server error");
             } else {
               res.status(400).send("Bad Request");
             }
@@ -127,7 +195,7 @@ app.get("/deal-cards", (req, res) => {
       }
     })
     .catch((error) => {
-      res.status(500).send("Internal Server Error");
+      res.status(500).send("internal server error");
     });
 });
 
@@ -155,7 +223,7 @@ app.get("/new-card", (req, res) => {
     })
     .catch((error) => {
       if (isMongoError(error)) {
-        res.status(500).send("Internal server error");
+        res.status(500).send("internal server error");
       } else {
         console.log(error);
         res.status(400).send("Bad Request");
