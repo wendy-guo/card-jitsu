@@ -1,0 +1,21 @@
+.stacks {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 200px;
+  height: 50px;
+  border: 1px solid black;
+}
+
+.stack {
+  width: 50px;
+  display: flex;
+  flex-direction: column;
+  border: solid grey 1px;
+}
+
+.stack-card {
+  width: 40px;
+  height: 40px;
+  color: white;
+}
