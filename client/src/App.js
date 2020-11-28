@@ -111,41 +111,13 @@ const getRoundResults = async (match_id, player, opponent) => {
   }
 };
 
-/**
- * Post the player's card.
- * @param {String} match_id
- * @param {Number} index
- */
-const postPlayedCard = (match_id, index) => {
-  const request = new Request("/play-card", {
-    method: "post",
-    body: JSON.stringify({ match_id, index }),
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-    },
-  });
-
-  return fetch(request)
-    .then((res) => {
-      if (res.status === 200) {
-        return res.json();
-      }
-    })
-    .then((json) => {
-      console.log("look at me !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(json);
-      return json;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
 function App() {
   const [match, setMatch] = useState(null);
   const [opponentPlayedCard, setOpponentPlayedCard] = useState(null);
   const [playerPlayedCard, setPlayerPlayedCard] = useState(null);
+  const [playerStacks, setPlayerStacks] = useState(null);
+  const [opponentStacks, setOpponentStacks] = useState(null);
+
   const [playable, setPlayable] = useState(true);
   const [playableOp, setPlayableOp] = useState(true);
   const [roundResult, setRoundResult] = useState(null);
@@ -160,15 +132,11 @@ function App() {
       startMatch().then((match) => {
         console.log("hai", match._id);
         setMatch(match);
+        setPlayerStacks(match.playerStacks);
+        setOpponentStacks(match.opponentStacks);
       });
     } else if (gameStarted) {
     }
-  };
-
-  const updateMatch = () => {
-    getMatch(match._id).then((match) => {
-      setMatch(match);
-    });
   };
 
   const getOpponentMove = (match) => {
@@ -181,12 +149,6 @@ function App() {
     }
   };
 
-  const playCard = (index) => {
-    postPlayedCard(match._id, index).then(() => {
-      updateMatch();
-    });
-  };
-
   const evaluateRound = () => {
     if (!playerPlayedCard || !opponentPlayedCard || roundEvaluated) {
       return;
@@ -196,11 +158,23 @@ function App() {
       console.log("hallo?????");
       getRoundResults(match, playerPlayedCard, opponentPlayedCard).then(
         (result) => {
-          setRoundResult(result);
+          setRoundResult(result.winner);
           console.log("------------ round result:", result);
+          if (result === "player") {
+            playerStacks[playerPlayedCard.type].push(playerPlayedCard.colour);
+            setPlayerStacks(playerStacks);
+          } else if (result === "opponent") {
+            opponentStacks[opponentPlayedCard.type].push(
+              opponentPlayedCard.colour
+            );
+            setOpponentStacks(opponentStacks);
+          }
           setPlayerPlayedCard(null);
           setOpponentPlayedCard(null);
-          updateMatch();
+          setTimeout(() => {
+            console.log(playerStacks);
+            console.log(opponentStacks);
+          }, 500);
         }
       );
     }, 1000);
@@ -222,7 +196,7 @@ function App() {
         <div>
           play a card
           {roundResult ? (
-            <div>hallo</div>
+            <div>{roundResult} wins!!!!!!!!!</div>
           ) : (
             <PlayedCards
               id="played-cards"
@@ -238,7 +212,7 @@ function App() {
               if (playable) {
                 setPlayable(false);
                 setPlayerPlayedCard(match.playerCards[index]);
-                playCard(index);
+                match.playerCards.splice(index, 1);
                 console.log(index, "clicked");
               }
             }}
