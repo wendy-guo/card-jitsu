@@ -1,3 +1,10 @@
 * {
   font-family: "Courier New", Courier, monospace;
 }
+
+.stacks-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px 50px 0px 50px;
+}
