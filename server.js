@@ -217,37 +217,7 @@ app.post("/get-round-result", (req, res) => {
   var result = getResult(req.body.player, req.body.opponent);
   console.log("result!!!!!!!!!!!!!!!!", result);
 
-  Match.findById(req.body.match_id)
-    .then((match) => {
-      if (!match) {
-        res.status(404).send("resource not found");
-      } else {
-        if (result == "player") {
-          match.playerStacks[req.body.player.type].push(req.body.player.colour);
-        } else if (result == "opponent") {
-          match.opponentStacks[req.body.opponent.type].push(
-            req.body.opponent.colour
-          );
-        }
-        console.log("resultyyyyyyy", result);
-
-        match
-          .save()
-          .then((result) => {
-            res.send(result);
-          })
-          .catch((error) => {
-            if (isMongoError(error)) {
-              res.status(500).send("internal server error :(");
-            } else {
-              res.status(400).send("bad request");
-            }
-          });
-      }
-    })
-    .catch((error) => {
-      res.status(500).send("internal server error");
-    });
+  res.send({ result });
 });
 
 /**
