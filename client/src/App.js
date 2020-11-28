@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import "./App.css";
 import CardBar from "./components/CardBar";
 import PlayedCards from "./components/PlayedCards";
-import Card from "./components/Card";
+import MainScreen from "./components/MainScreen";
 
-const startMatch = () => {
+// requests to backend
+
+/**
+ * Start a new match.
+ */
+const startMatch = async () => {
   const request = new Request("/start-match", {
     method: "post",
     body: JSON.stringify({ player: "wendy" }),
@@ -14,21 +20,45 @@ const startMatch = () => {
     },
   });
 
-  return fetch(request)
-    .then((res) => {
-      if (res.status === 200) {
-        return res.json();
-      }
-    })
-    .then((json) => {
-      return json;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  try {
+    const res = await fetch(request);
+    if (res.status === 200) {
+      return res.json();
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const getOpponentCard = (match_id) => {
+/**
+ * Get match information.
+ * @param {String} match_id
+ */
+const getMatch = async (match_id) => {
+  const request = new Request("/get-match", {
+    method: "post",
+    body: JSON.stringify({ match_id }),
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    },
+  });
+
+  try {
+    const res = await fetch(request);
+    if (res.status === 200) {
+      return res.json();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * Get opponent card for this match.
+ * @param {String} match_id
+ */
+const getOpponentCard = async (match_id) => {
   const request = new Request("/opponent-card", {
     method: "post",
     body: JSON.stringify({ match_id }),
@@ -40,24 +70,24 @@ const getOpponentCard = (match_id) => {
 
   console.log("getting opponent move...");
 
-  return fetch(request)
-    .then((res) => {
-      if (res.status === 200) {
-        console.log(res);
-        return res.json();
-      }
-    })
-    .then((json) => {
-      console.log("opponeent's card", json);
-      return json;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  try {
+    const res = await fetch(request);
+    if (res.status === 200) {
+      console.log(res);
+      return res.json();
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const getRoundResults = (match_id, player, opponent) => {
-
+/**
+ * Get results of this round.
+ * @param {String} match_id
+ * @param {Card} player
+ * @param {Card} opponent
+ */
+const getRoundResults = async (match_id, player, opponent) => {
   const request = new Request("/get-round-result", {
     method: "post",
     body: JSON.stringify({ match_id, player, opponent }),
@@ -67,7 +97,34 @@ const getRoundResults = (match_id, player, opponent) => {
     },
   });
 
-  console.log("storing and checking round results");
+  try {
+    const res = await fetch(request);
+    if (res.status === 200) {
+      return res.json();
+    }
+    const json = undefined;
+    console.log("round result", json);
+    return json;
+  } catch (error) {
+    console.log("huhhhhhhhhhhhhhhhh");
+    console.log(error);
+  }
+};
+
+/**
+ * Post the player's card.
+ * @param {String} match_id
+ * @param {Number} index
+ */
+const postPlayedCard = (match_id, index) => {
+  const request = new Request("/play-card", {
+    method: "post",
+    body: JSON.stringify({ match_id, index }),
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    },
+  });
 
   return fetch(request)
     .then((res) => {
@@ -76,41 +133,16 @@ const getRoundResults = (match_id, player, opponent) => {
       }
     })
     .then((json) => {
-      console.log("round result", json);
+      console.log("look at me !!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log(json);
       return json;
     })
     .catch((error) => {
-      console.log("huhhhhhhhhhhhhhhhh");
       console.log(error);
     });
 };
 
-// pass with global context?
-const colours = [
-  "rgb(197, 27, 56)",
-  "rgb(161, 231, 236)",
-  "rgb(255, 236, 127)",
-];
-
-var myCards = [
-  { type: "water", number: 5, colour: "rgb(197, 27, 56)" },
-  { type: "water", number: 3, colour: "rgb(161, 231, 236)" },
-  { type: "fire", number: 9, colour: "rgb(255, 236, 127)" },
-  { type: "grass", number: 4, colour: "rgb(197, 27, 56)" },
-  { type: "fire", number: 7, colour: "rgb(197, 27, 56)" },
-];
-
-var opponentCards = [
-  { type: "water", number: 5, colour: "rgb(197, 27, 56)" },
-  { type: "water", number: 3, colour: "rgb(161, 231, 236)" },
-  { type: "fire", number: 9, colour: "rgb(255, 236, 127)" },
-  { type: "grass", number: 4, colour: "rgb(197, 27, 56)" },
-  { type: "fire", number: 7, colour: "rgb(197, 27, 56)" },
-];
-
 function App() {
-  // at the beginning of the game, make api call to get starting cards for player
-
   const [match, setMatch] = useState(null);
   const [opponentPlayedCard, setOpponentPlayedCard] = useState(null);
   const [playerPlayedCard, setPlayerPlayedCard] = useState(null);
@@ -120,6 +152,7 @@ function App() {
 
   const [gameStarted, setGameStarted] = useState(false);
   const [newGame, setNewGame] = useState(true);
+  const [roundEvaluated, setRoundEvaluated] = useState(false);
 
   const setUpCards = () => {
     if (gameStarted && newGame) {
@@ -132,6 +165,12 @@ function App() {
     }
   };
 
+  const updateMatch = () => {
+    getMatch(match._id).then((match) => {
+      setMatch(match);
+    });
+  };
+
   const getOpponentMove = (match) => {
     if (match && playableOp) {
       setPlayableOp(false);
@@ -142,28 +181,44 @@ function App() {
     }
   };
 
+  const playCard = (index) => {
+    postPlayedCard(match._id, index).then(() => {
+      updateMatch();
+    });
+  };
+
   const evaluateRound = () => {
-    if (playerPlayedCard && opponentPlayedCard) {
-      console.log("NOT NULL!!!!!", playerPlayedCard, opponentPlayedCard);
+    if (!playerPlayedCard || !opponentPlayedCard || roundEvaluated) {
+      return;
+    }
+    setRoundEvaluated(true);
+    setTimeout(() => {
+      console.log("hallo?????");
       getRoundResults(match, playerPlayedCard, opponentPlayedCard).then(
         (result) => {
           setRoundResult(result);
           console.log("------------ round result:", result);
           setPlayerPlayedCard(null);
           setOpponentPlayedCard(null);
+          updateMatch();
         }
       );
-    }
+    }, 1000);
   };
 
   setUpCards();
   getOpponentMove(match);
-  evaluateRound();
+  evaluateRound(playerPlayedCard, opponentPlayedCard);
 
-  return (
-    <div className="App">
-      hallo world
-      {match ? (
+  // front end stuff
+  const getMainScreen = () => {
+    console.log("getting main screen");
+    return <MainScreen onStartClick={() => setGameStarted(true)} />;
+  };
+
+  const getGameScreen = () => {
+    if (match) {
+      return (
         <div>
           play a card
           {roundResult ? (
@@ -181,16 +236,35 @@ function App() {
             playable={playable}
             onCardClick={(index) => {
               if (playable) {
-                setPlayerPlayedCard(match.playerCards[index]);
                 setPlayable(false);
+                setPlayerPlayedCard(match.playerCards[index]);
+                playCard(index);
                 console.log(index, "clicked");
               }
             }}
           />
         </div>
-      ) : (
-        <button onClick={() => setGameStarted(true)}>start game</button>
-      )}
+      );
+    } else {
+      return (
+        <div
+          style={{ width: "500px", height: "500px", backgroundColor: "red" }}
+        >
+          loading
+        </div>
+      );
+    }
+  };
+
+  return (
+    <div className="App">
+      hallo world
+      <BrowserRouter>
+        <Switch>
+          <Route path="/" render={getMainScreen} exact />
+          <Route path="/match" render={getGameScreen} exact />
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }
