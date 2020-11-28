@@ -4,6 +4,7 @@ import "./App.css";
 import CardBar from "./components/CardBar";
 import PlayedCards from "./components/PlayedCards";
 import MainScreen from "./components/MainScreen";
+import Stacks from "./components/Stacks";
 
 // requests to backend
 
@@ -123,19 +124,18 @@ function App() {
   const [roundResult, setRoundResult] = useState(null);
 
   const [gameStarted, setGameStarted] = useState(false);
-  const [newGame, setNewGame] = useState(true);
+  const [newGame, setNewGame] = useState(null);
   const [roundEvaluated, setRoundEvaluated] = useState(false);
 
   const setUpCards = () => {
-    if (gameStarted && newGame) {
+    if (newGame) {
       setNewGame(false);
       startMatch().then((match) => {
         console.log("hai", match._id);
-        setMatch(match);
         setPlayerStacks(match.playerStacks);
         setOpponentStacks(match.opponentStacks);
+        setMatch(match);
       });
-    } else if (gameStarted) {
     }
   };
 
@@ -149,6 +149,16 @@ function App() {
     }
   };
 
+  const resetRound = () => {
+    setRoundResult(null);
+    setRoundEvaluated(false);
+    // make a request to deal card if cards less than 3...then(set playable to true)
+    setTimeout(() => {
+      setPlayable(true);
+      setPlayableOp(true);
+    }, 1000);
+  };
+
   const evaluateRound = () => {
     if (!playerPlayedCard || !opponentPlayedCard || roundEvaluated) {
       return;
@@ -160,10 +170,10 @@ function App() {
         (result) => {
           setRoundResult(result.winner);
           console.log("------------ round result:", result);
-          if (result === "player") {
+          if (result.winner === "player") {
             playerStacks[playerPlayedCard.type].push(playerPlayedCard.colour);
             setPlayerStacks(playerStacks);
-          } else if (result === "opponent") {
+          } else if (result.winner === "opponent") {
             opponentStacks[opponentPlayedCard.type].push(
               opponentPlayedCard.colour
             );
@@ -171,10 +181,8 @@ function App() {
           }
           setPlayerPlayedCard(null);
           setOpponentPlayedCard(null);
-          setTimeout(() => {
-            console.log(playerStacks);
-            console.log(opponentStacks);
-          }, 500);
+
+          setTimeout(resetRound(), 2000);
         }
       );
     }, 1000);
@@ -187,7 +195,7 @@ function App() {
   // front end stuff
   const getMainScreen = () => {
     console.log("getting main screen");
-    return <MainScreen onStartClick={() => setGameStarted(true)} />;
+    return <MainScreen onStartClick={() => setNewGame(true)} />;
   };
 
   const getGameScreen = () => {
@@ -195,8 +203,14 @@ function App() {
       return (
         <div>
           play a card
+          <div className="stacks-bar">
+            <Stacks stacks={opponentStacks} />
+            <Stacks stacks={playerStacks} />
+          </div>
           {roundResult ? (
-            <div>{roundResult} wins!!!!!!!!!</div>
+            <div style={{ fontWeight: "600", color: "pink" }}>
+              {roundResult} wins!!!!!!!!!
+            </div>
           ) : (
             <PlayedCards
               id="played-cards"
@@ -232,7 +246,6 @@ function App() {
 
   return (
     <div className="App">
-      hallo world
       <BrowserRouter>
         <Switch>
           <Route path="/" render={getMainScreen} exact />
@@ -242,21 +255,5 @@ function App() {
     </div>
   );
 }
-
-/**
-  <PlayedCards
-        id="played-cards"
-        playerCard={playerPlayedCard}
-        opponentCard={opponentPlayedCard}
-      />
-      <CardBar
-        id="card-bar"
-        cards={playerCards}
-        onCardClick={(index) => {
-          setPlayerPlayedCard(playerCards[index]);
-          console.log(index, "clicked");
-        }}
-      />
- */
 
 export default App;
