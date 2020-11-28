@@ -108,6 +108,29 @@ app.post("/start-match", (req, res) => {
     });
 });
 
+/**
+ * Returns the match.
+ */
+app.post("/get-match", (req, res) => {
+  if (mongoose.connection.readyState != 1) {
+    console.log("issue with mongoose connection");
+    res.status(500).send("internal server error");
+    return;
+  }
+
+  Match.findById(req.body.match_id)
+    .then((match) => {
+      if (!match) {
+        res.status(404).send("resource not found");
+      } else {
+        res.send(match);
+      }
+    })
+    .catch(() => {
+      res.status(500).send("internal server error");
+    });
+});
+
 app.post("/opponent-card", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
@@ -158,7 +181,10 @@ app.post("/play-card", (req, res) => {
       if (!match) {
         res.status(404).send("resource not found");
       } else {
-        match.playerCards.pop(req.body.index);
+        console.log(match.playerCards);
+        console.log("popping index", req.body.index);
+        match.playerCards.splice(req.body.index, 1);
+        console.log(match.playerCards);
         match
           .save()
           .then((result) => {
@@ -196,15 +222,13 @@ app.post("/get-round-result", (req, res) => {
       if (!match) {
         res.status(404).send("resource not found");
       } else {
-        
         if (result == "player") {
-          match.playerStack[req.body.player.type].push(req.body.player.colour);
-        } else if (result == "opponents") {
-          match.opponentStack[req.body.opponent.type].push(
+          match.playerStacks[req.body.player.type].push(req.body.player.colour);
+        } else if (result == "opponent") {
+          match.opponentStacks[req.body.opponent.type].push(
             req.body.opponent.colour
           );
         }
-
         console.log("resultyyyyyyy", result);
 
         match
