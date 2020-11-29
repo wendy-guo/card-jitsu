@@ -103,6 +103,30 @@ const getDealedCards = async (match_id) => {
   }
 };
 
+const getWinner = async (playerStacks, opponentStacks) => {
+  const request = new Request(
+    `/get-winner?playerStacks=${JSON.stringify(
+      playerStacks
+    )}&opponentStacks=${JSON.stringify(opponentStacks)}`,
+    {
+      method: "get",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  try {
+    const res = await fetch(request);
+    if (res.status === 200) {
+      return res.json();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 function App() {
   const [match, setMatch] = useState(null);
   const [opponentPlayedCard, setOpponentPlayedCard] = useState(null);
@@ -114,9 +138,10 @@ function App() {
   const [playableOp, setPlayableOp] = useState(true);
   const [roundResult, setRoundResult] = useState(null);
 
-  const [gameStarted, setGameStarted] = useState(false);
   const [newGame, setNewGame] = useState(null);
   const [roundEvaluated, setRoundEvaluated] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const [winningCards, setWinningCards] = useState(null);
 
   const setUpCards = () => {
     if (newGame) {
@@ -133,10 +158,12 @@ function App() {
   const getOpponentMove = (match) => {
     if (match && playableOp) {
       setPlayableOp(false);
-      getOpponentCard(match._id).then((card) => {
-        setOpponentPlayedCard(card);
-        console.log(card);
-      });
+      setTimeout(() => {
+        getOpponentCard(match._id).then((card) => {
+          setOpponentPlayedCard(card);
+          console.log(card);
+        });
+      }, 1000);
     }
   };
 
@@ -179,8 +206,16 @@ function App() {
         }
         setPlayerPlayedCard(null);
         setOpponentPlayedCard(null);
-
-        setTimeout(resetRound(), 2000);
+        getWinner(playerStacks, opponentStacks).then((result) => {
+          if (result.winner) {
+            console.log("winner", result.winner);
+            console.log("cards", result.cards);
+            setWinner(result.winner);
+            // animate stack
+          } else {
+            setTimeout(resetRound(), 2000);
+          }
+        });
       });
     }, 1000);
   };
@@ -204,9 +239,14 @@ function App() {
             <Stacks stacks={opponentStacks} />
             <Stacks stacks={playerStacks} />
           </div>
+          {winner ? (
+            <div>{winner} wins!!!!!!!!!!!!!</div>
+          ) : (
+            <div>no winner yet</div>
+          )}
           {roundResult ? (
             <div style={{ fontWeight: "600", color: "pink" }}>
-              {roundResult} wins!!!!!!!!!
+              {roundResult} wins this round.
             </div>
           ) : (
             <PlayedCards
