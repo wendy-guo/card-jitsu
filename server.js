@@ -34,7 +34,6 @@ function generateNewCard() {
 }
 
 function getOpponentMove(cards) {
-  console.log("opponent move");
   return Math.floor(Math.random() * cards.length);
 }
 
@@ -52,6 +51,147 @@ function getResult(player, opponent) {
   } else {
     return opponent.type == "snow" ? "player" : "opponent";
   }
+}
+
+function checkWinner(playerStacks, opponentStacks) {
+  // check for player win of all snow cards
+  var winning_colours = [];
+  var winning_cards = [];
+
+  for (let i = 0; i < playerStacks.snow.length; i++) {
+    if (!winning_colours.includes(playerStacks.snow[i])) {
+      winning_colours.push(playerStacks.snow[i]);
+      winning_cards.push({ type: "snow", colour: playerStacks.snow[i] });
+
+      if (winning_cards.length == 3) {
+        return { winner: "player", cards: winning_cards };
+      }
+    }
+  }
+
+  winning_colours = [];
+  winning_cards = [];
+
+  // check for player win of all water cards
+  for (let i = 0; i < playerStacks.water.length; i++) {
+    if (!winning_colours.includes(playerStacks.water[i])) {
+      winning_colours.push(playerStacks.water[i]);
+      winning_cards.push({ type: "water", colour: playerStacks.water[i] });
+
+      if (winning_cards.length == 3) {
+        return { winner: "player", cards: winning_cards };
+      }
+    }
+  }
+
+  winning_colours = [];
+  winning_cards = [];
+
+  // check for player win of all fire cards
+  for (let i = 0; i < playerStacks.fire.length; i++) {
+    if (!winning_colours.includes(playerStacks.fire[i])) {
+      winning_colours.push(playerStacks.fire[i]);
+      winning_cards.push({ type: "fire", colour: playerStacks.fire[i] });
+
+      if (winning_cards.length == 3) {
+        return { winner: "player", cards: winning_cards };
+      }
+    }
+  }
+
+  winning_colours = [];
+  winning_cards = [];
+
+  // check for opponent win of all snow cards
+  for (let i = 0; i < opponentStacks.snow.length; i++) {
+    if (!winning_colours.includes(playerStacks.snow[i])) {
+      winning_colours.push(playerStacks.snow[i]);
+      winning_cards.push({ type: "snow", colour: playerStacks.snow[i] });
+
+      if (winning_cards.length == 3) {
+        return { winner: "opponent", cards: winning_cards };
+      }
+    }
+  }
+
+  winning_colours = [];
+  winning_cards = [];
+
+  // check for opponent win of all water cards
+  for (let i = 0; i < opponentStacks.water.length; i++) {
+    if (!winning_colours.includes(playerStacks.water[i])) {
+      winning_colours.push(playerStacks.water[i]);
+      winning_cards.push({ type: "water", colour: playerStacks.water[i] });
+
+      if (winning_cards.length == 3) {
+        return { winner: "opponent", cards: winning_cards };
+      }
+    }
+  }
+
+  winning_colours = [];
+  winning_cards = [];
+
+  // check for opponent win of all fire cards
+  for (let i = 0; i < opponentStacks.fire.length; i++) {
+    if (!winning_colours.includes(playerStacks.fire[i])) {
+      winning_colours.push(playerStacks.fire[i]);
+      winning_cards.push({ type: "fire", colour: playerStacks.fire[i] });
+
+      if (winning_cards.length == 3) {
+        return { winner: "opponent", cards: winning_cards };
+      }
+    }
+  }
+
+  // check for player win of different card types
+  for (let i = 0; i < playerStacks.snow.length; i++) {
+    for (let j = 0; j < playerStacks.water.length; j++) {
+      if (playerStacks.snow[i] == playerStacks.water[j]) {
+        continue;
+      }
+      for (let k = 0; j < playerStacks.fire.length; k++) {
+        if (
+          playerStacks.snow[i] !== playerStacks.fire[k] &&
+          playerStacks.fire[k] !== playerStacks.water[j]
+        ) {
+          return {
+            winner: "player",
+            cards: [
+              { type: "snow", colour: playerStacks.snow[i] },
+              { type: "water", colour: playerStacks.water[j] },
+              { type: "fire", colour: playerStacks.fire[k] },
+            ],
+          };
+        }
+      }
+    }
+  }
+
+  // check for opponent win of different card types
+  for (let i = 0; i < opponentStacks.snow.length; i++) {
+    for (let j = 0; j < opponentStacks.water.length; j++) {
+      if (opponentStacks.snow[i] == opponentStacks.water[j]) {
+        continue;
+      }
+      for (let k = 0; j < opponentStacks.fire.length; k++) {
+        if (
+          opponentStacks.snow[i] !== opponentStacks.fire[k] &&
+          opponentStacks.fire[k] !== opponentStacks.water[j]
+        ) {
+          return {
+            winner: "opponent",
+            cards: [
+              { type: "snow", colour: opponentStacks.snow[i] },
+              { type: "water", colour: opponentStacks.water[j] },
+              { type: "fire", colour: opponentStacks.fire[k] },
+            ],
+          };
+        }
+      }
+    }
+  }
+  return { winner: null };
 }
 
 app.use(
@@ -160,27 +300,26 @@ app.get("/get-round-result", (req, res) => {
 });
 
 /**
- * Generate and return new cards for the players of a match.
+ * Generate one new card for the players of a match.
  */
-app.get("/deal-card", (req, res) => {
+app.get("/deal-cards", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
     res.status(500).send("internal server error");
     return;
   }
 
-  Match.findById(req.body.match_id)
+  Match.findById(req.query.match_id)
     .then((match) => {
       if (!match) {
         res.status(404).send("resource not found");
       } else {
-        match.playerCards.push(generateNewCard());
         match.opponentCards.push(generateNewCard());
 
         match
           .save()
-          .then((result) => {
-            res.send(result);
+          .then(() => {
+            res.send(generateNewCard());
           })
           .catch((error) => {
             if (isMongoError(error)) {
@@ -196,36 +335,19 @@ app.get("/deal-card", (req, res) => {
     });
 });
 
-/**
- * Get stacks for players.
- */
-app.get("/new-card", (req, res) => {
+app.get("/get-winner", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
     res.status(500).send("internal server error");
     return;
   }
 
-  const card = new Card({
-    type: card_types[Math.floor(Math.random() * 3)],
-    number: Math.floor(Math.random() * 11) + 2,
-    colour: card_colours[Math.floor(Math.random() * 6)],
-  });
+  var results = checkWinner(
+    JSON.parse(req.query.playerStacks),
+    JSON.parse(req.query.opponentStacks)
+  );
 
-  card
-    .save()
-    .then((result) => {
-      res.send(result);
-      console.log(result);
-    })
-    .catch((error) => {
-      if (isMongoError(error)) {
-        res.status(500).send("internal server error");
-      } else {
-        console.log(error);
-        res.status(400).send("Bad Request");
-      }
-    });
+  res.send(results);
 });
 
 app.use(express.static(__dirname + "/client/build"));
