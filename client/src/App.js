@@ -211,6 +211,7 @@ function App() {
             console.log("winner", result.winner);
             console.log("cards", result.cards);
             setWinner(result.winner);
+            setWinningCards(result.cards);
             // animate stack
           } else {
             setTimeout(resetRound(), 2000);
