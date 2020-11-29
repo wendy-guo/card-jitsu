@@ -1,5 +1,10 @@
+@font-face {
+  font-family: AnimalCrossing;
+  src: url("./assets/FOT-RodinWanpaku\ Pro\ B.otf") format("opentype");
+}
+
 * {
-  font-family: "Courier New", Courier, monospace;
+  font-family: AnimalCrossing, "Courier new", monospace;
 }
 
 .stacks-bar {
