@@ -249,12 +249,13 @@ function App() {
               {roundResult} wins this round.
             </div>
           ) : (
-            <PlayedCards
-              id="played-cards"
-              playerCard={playerPlayedCard}
-              opponentCard={opponentPlayedCard}
-            />
+            <div>nothing</div>
           )}
+          <PlayedCards
+            id="played-cards"
+            playerCard={playerPlayedCard}
+            opponentCard={opponentPlayedCard}
+          />
           <CardBar
             id="card-bar"
             cards={match.playerCards}
