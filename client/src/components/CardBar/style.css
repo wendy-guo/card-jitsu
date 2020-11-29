@@ -10,4 +10,5 @@
 .playable div:hover {
   transform: scale(1.01);
   transform-origin: center;
+  cursor: pointer;
 }
