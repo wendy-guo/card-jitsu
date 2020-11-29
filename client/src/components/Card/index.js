@@ -1,4 +1,4 @@
-import "./Card.css";
+import "./style.css";
 
 function Card(props) {
   return (
@@ -6,7 +6,6 @@ function Card(props) {
       className="card"
       style={{
         borderColor: props.card.colour,
-        backgroundColor: "rgb(255, 230, 230)",
         height: props.height,
         width: props.width,
       }}
