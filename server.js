@@ -40,7 +40,7 @@ function getOpponentMove(cards) {
 
 function getResult(player, opponent) {
   if (player.type == opponent.type) {
-    return player.number > opponent.type
+    return player.number > opponent.number
       ? "player"
       : player.number < opponent.number
       ? "opponent"
@@ -69,7 +69,7 @@ app.use(
 /**
  * Start a new match of card-jitsu.
  */
-app.post("/start-match", (req, res) => {
+app.get("/start-match", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
     res.status(500).send("internal server error");
@@ -84,13 +84,13 @@ app.post("/start-match", (req, res) => {
     opponentCards.push(generateNewCard());
   }
 
+  console.log("hallo", req.query.player);
+
   const match = new Match({
-    player: req.body.player,
     playerCards,
     opponentCards,
     playerStacks: new Stack(),
     opponentStacks: new Stack(),
-    winner: null,
   });
 
   match
@@ -108,37 +108,14 @@ app.post("/start-match", (req, res) => {
     });
 });
 
-/**
- * Returns the match.
- */
-app.post("/get-match", (req, res) => {
+app.get("/opponent-card", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
     res.status(500).send("internal server error");
     return;
   }
 
-  Match.findById(req.body.match_id)
-    .then((match) => {
-      if (!match) {
-        res.status(404).send("resource not found");
-      } else {
-        res.send(match);
-      }
-    })
-    .catch(() => {
-      res.status(500).send("internal server error");
-    });
-});
-
-app.post("/opponent-card", (req, res) => {
-  if (mongoose.connection.readyState != 1) {
-    console.log("issue with mongoose connection");
-    res.status(500).send("internal server error");
-    return;
-  }
-
-  Match.findById(req.body.match_id)
+  Match.findById(req.query.match_id)
     .then((match) => {
       if (!match) {
         res.status(404).send("resource not found");
@@ -146,49 +123,10 @@ app.post("/opponent-card", (req, res) => {
         var card = match.opponentCards.pop(
           getOpponentMove(match.opponentCards)
         );
-        console.log("opponent card", card);
         match
           .save()
           .then(() => {
             res.send(card);
-          })
-          .catch((error) => {
-            if (isMongoError(error)) {
-              res.status(500).send("internal server error");
-            } else {
-              res.status(400).send("bad request");
-            }
-          });
-      }
-    })
-    .catch((error) => {
-      res.status(500).send("internal server error");
-    });
-});
-
-/**
- * Plays the card the player chooses.
- */
-app.post("/play-card", (req, res) => {
-  if (mongoose.connection.readyState != 1) {
-    console.log("issue with mongoose connection");
-    res.status(500).send("internal server error");
-    return;
-  }
-
-  Match.findById(req.body.match_id)
-    .then((match) => {
-      if (!match) {
-        res.status(404).send("resource not found");
-      } else {
-        console.log(match.playerCards);
-        console.log("popping index", req.body.index);
-        match.playerCards.splice(req.body.index, 1);
-        console.log(match.playerCards);
-        match
-          .save()
-          .then((result) => {
-            res.send(result);
           })
           .catch((error) => {
             if (isMongoError(error)) {
@@ -217,7 +155,7 @@ app.post("/get-round-result", (req, res) => {
   var result = getResult(req.body.player, req.body.opponent);
   console.log("result!!!!!!!!!!!!!!!!", result);
 
-  res.send({ result });
+  res.send({ winner: result });
 });
 
 /**
