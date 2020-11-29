@@ -175,12 +175,10 @@ function checkWinner(playerStacks, opponentStacks) {
   // check for opponent win of different card types
   for (let i = 0; i < opponentStacks.snow.length; i++) {
     for (let j = 0; j < opponentStacks.water.length; j++) {
+      if (opponentStacks.snow[i] == opponentStacks.water[j]) {
+        continue;
+      }
       for (let k = 0; k < opponentStacks.fire.length; k++) {
-        console.log(
-          opponentStacks.snow[i],
-          opponentStacks.water[j],
-          opponentStacks.fire[k]
-        );
         if (
           opponentStacks.snow[i] !== opponentStacks.fire[k] &&
           opponentStacks.fire[k] !== opponentStacks.water[j]
