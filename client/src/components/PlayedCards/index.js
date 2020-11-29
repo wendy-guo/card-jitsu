@@ -1,4 +1,4 @@
-import "./PlayedCards.css";
+import "./style.css";
 import Card from "../Card";
 
 function PlayedCards(props) {
@@ -8,6 +8,7 @@ function PlayedCards(props) {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
+        height: "400px",
       }}
     >
       {props.opponentCard ? (
@@ -19,7 +20,7 @@ function PlayedCards(props) {
           onCardClick={(index) => null}
         />
       ) : (
-        <div className="played-card"> waiting for opponent </div>
+        <div className="placeholder-card"> waiting for opponent </div>
       )}
       {props.playerCard ? (
         <Card
@@ -30,7 +31,7 @@ function PlayedCards(props) {
           onCardClick={(index) => -1}
         />
       ) : (
-        <div className="played-card"> play a card </div>
+        <div className="placeholder-card"> play a card </div>
       )}
     </div>
   );
