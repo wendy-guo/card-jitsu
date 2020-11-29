@@ -7,6 +7,10 @@
   font-family: AnimalCrossing, "Courier new", monospace;
 }
 
+.App {
+  height: 100vh;
+}
+
 .stacks-bar {
   display: flex;
   flex-direction: row;
