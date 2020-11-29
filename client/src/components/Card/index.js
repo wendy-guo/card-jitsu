@@ -1,7 +1,7 @@
 import "./style.css";
 
 function Card(props) {
-  return (
+  return props.card ? (
     <div
       className="card"
       style={{
@@ -26,6 +26,8 @@ function Card(props) {
       </div>
       type {props.card.type}
     </div>
+  ) : (
+    <div className="card" style={{ height: props.height, width: props.width, opacity: 0 }}></div>
   );
 }
 

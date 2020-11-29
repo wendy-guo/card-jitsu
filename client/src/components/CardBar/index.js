@@ -9,7 +9,7 @@ function CardBar(props) {
         className={props.playable ? "card-bar playable" : "card-bar"}
       >
         {props.cards.map((card, i) => (
-          <CSSTransition key={i} timeout={500} classNames="card">
+          <CSSTransition key={i} timeout={2000} classNames="card">
             <Card
               index={i}
               key={i}

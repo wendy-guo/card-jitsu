@@ -129,6 +129,7 @@ const getWinner = async (playerStacks, opponentStacks) => {
 
 function App() {
   const [match, setMatch] = useState(null);
+  const [playerCards, setPlayerCards] = useState(null);
   const [opponentPlayedCard, setOpponentPlayedCard] = useState(null);
   const [playerPlayedCard, setPlayerPlayedCard] = useState(null);
   const [playerStacks, setPlayerStacks] = useState(null);
@@ -147,10 +148,10 @@ function App() {
     if (newGame) {
       setNewGame(false);
       startMatch().then((match) => {
-        console.log("hai", match._id);
         setPlayerStacks(match.playerStacks);
         setOpponentStacks(match.opponentStacks);
-        setMatch(match);
+        setPlayerCards(match.playerCards);
+        setMatch(match._id);
       });
     }
   };
@@ -159,7 +160,7 @@ function App() {
     if (match && playableOp) {
       setPlayableOp(false);
       setTimeout(() => {
-        getOpponentCard(match._id).then((card) => {
+        getOpponentCard(match).then((card) => {
           setOpponentPlayedCard(card);
           console.log(card);
         });
@@ -177,9 +178,9 @@ function App() {
   };
 
   const dealCards = () => {
-    getDealedCards(match._id).then((card) => {
-      match.playerCards.push(card);
-      setMatch(match);
+    getDealedCards(match).then((card) => {
+      playerCards[playerCards.findIndex((card) => card === null)] = card;
+      setPlayerCards(playerCards);
       setPlayable(true);
       setPlayableOp(true);
     });
@@ -259,13 +260,14 @@ function App() {
           />
           <CardBar
             id="card-bar"
-            cards={match.playerCards}
+            cards={playerCards}
             playable={playable}
             onCardClick={(index) => {
               if (playable) {
                 setPlayable(false);
-                setPlayerPlayedCard(match.playerCards[index]);
-                match.playerCards.splice(index, 1);
+                setPlayerPlayedCard(playerCards[index]);
+                playerCards[index] = null;
+                setPlayerCards(playerCards);
                 console.log(index, "clicked");
               }
             }}
