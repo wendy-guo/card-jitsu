@@ -36,16 +36,13 @@ const startMatch = async () => {
  * @param {String} match_id
  */
 const getOpponentCard = async (match_id) => {
-  const request = new Request("/opponent-card", {
-    method: "post",
-    body: JSON.stringify({ match_id }),
+  const request = new Request(`/opponent-card?match_id=${match_id}`, {
+    method: "get",
     headers: {
       Accept: "application/json, text/plain, */*",
       "Content-Type": "application/json",
     },
   });
-
-  console.log("getting opponent move...");
 
   try {
     const res = await fetch(request);
@@ -64,15 +61,18 @@ const getOpponentCard = async (match_id) => {
  * @param {Card} player
  * @param {Card} opponent
  */
-const getRoundResults = async (match_id, player, opponent) => {
-  const request = new Request("/get-round-result", {
-    method: "post",
-    body: JSON.stringify({ match_id, player, opponent }),
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-    },
-  });
+const getRoundResults = async (player, opponent) => {
+  console.log(">:(", player, opponent);
+  const request = new Request(
+    `/get-round-result?player=${JSON.stringify(player)}&opponent=${JSON.stringify(opponent)}`,
+    {
+      method: "get",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   try {
     const res = await fetch(request);
@@ -118,7 +118,7 @@ function App() {
   const getOpponentMove = (match) => {
     if (match && playableOp) {
       setPlayableOp(false);
-      getOpponentCard(match).then((card) => {
+      getOpponentCard(match._id).then((card) => {
         setOpponentPlayedCard(card);
         console.log(card);
       });
@@ -142,25 +142,23 @@ function App() {
     setRoundEvaluated(true);
     setTimeout(() => {
       console.log("hallo?????");
-      getRoundResults(match, playerPlayedCard, opponentPlayedCard).then(
-        (result) => {
-          setRoundResult(result.winner);
-          console.log("------------ round result:", result);
-          if (result.winner === "player") {
-            playerStacks[playerPlayedCard.type].push(playerPlayedCard.colour);
-            setPlayerStacks(playerStacks);
-          } else if (result.winner === "opponent") {
-            opponentStacks[opponentPlayedCard.type].push(
-              opponentPlayedCard.colour
-            );
-            setOpponentStacks(opponentStacks);
-          }
-          setPlayerPlayedCard(null);
-          setOpponentPlayedCard(null);
-
-          setTimeout(resetRound(), 2000);
+      getRoundResults(playerPlayedCard, opponentPlayedCard).then((result) => {
+        setRoundResult(result.winner);
+        console.log("------------ round result:", result);
+        if (result.winner === "player") {
+          playerStacks[playerPlayedCard.type].push(playerPlayedCard.colour);
+          setPlayerStacks(playerStacks);
+        } else if (result.winner === "opponent") {
+          opponentStacks[opponentPlayedCard.type].push(
+            opponentPlayedCard.colour
+          );
+          setOpponentStacks(opponentStacks);
         }
-      );
+        setPlayerPlayedCard(null);
+        setOpponentPlayedCard(null);
+
+        setTimeout(resetRound(), 2000);
+      });
     }, 1000);
   };
 
