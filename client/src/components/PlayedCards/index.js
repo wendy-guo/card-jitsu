@@ -8,7 +8,8 @@ function PlayedCards(props) {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-around",
-        height: "400px",
+        height: "100%",
+        margin: "0px auto 60px auto",
       }}
     >
       {props.opponentCard ? (
