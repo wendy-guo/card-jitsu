@@ -12,33 +12,9 @@ import Stacks from "./components/Stacks";
  * Start a new match.
  */
 const startMatch = async () => {
-  const request = new Request("/start-match", {
-    method: "post",
-    body: JSON.stringify({ player: "wendy" }),
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-    },
-  });
-
-  try {
-    const res = await fetch(request);
-    if (res.status === 200) {
-      return res.json();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-/**
- * Get match information.
- * @param {String} match_id
- */
-const getMatch = async (match_id) => {
-  const request = new Request("/get-match", {
-    method: "post",
-    body: JSON.stringify({ match_id }),
+  var name = "bob";
+  const request = new Request(`/start-match?player=${name}`, {
+    method: "get",
     headers: {
       Accept: "application/json, text/plain, */*",
       "Content-Type": "application/json",
