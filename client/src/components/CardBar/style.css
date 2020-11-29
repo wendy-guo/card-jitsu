@@ -7,8 +7,27 @@
   justify-content: flex-start;
 }
 
+.card-bar div {
+  margin-left: 10px;
+}
+
 .playable div:hover {
   transform: scale(1.01);
   transform-origin: center;
   cursor: pointer;
+}
+
+.card-enter {
+  opacity: 0;
+}
+.card-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.card-exit {
+  opacity: 1;
+}
+.card-exit-active {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
 }
