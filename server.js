@@ -143,18 +143,19 @@ app.get("/opponent-card", (req, res) => {
 });
 
 /**
- * Get and store the winner of the round.
+ * Get the result of the round.
  */
-app.post("/get-round-result", (req, res) => {
+app.get("/get-round-result", (req, res) => {
   if (mongoose.connection.readyState != 1) {
     console.log("issue with mongoose connection");
     res.status(500).send("internal server error");
     return;
   }
 
-  var result = getResult(req.body.player, req.body.opponent);
-  console.log("result!!!!!!!!!!!!!!!!", result);
-
+  var result = getResult(
+    JSON.parse(req.query.player),
+    JSON.parse(req.query.opponent)
+  );
   res.send({ winner: result });
 });
 
@@ -226,40 +227,6 @@ app.get("/new-card", (req, res) => {
       }
     });
 });
-
-// me express server
-
-// start with blank file
-
-// generateCards -> generate sets of random cards for player and opponent, write to file, called at start of game
-
-// getPlayerCards -> reads from file and returns player cards
-
-// playCard -> writes a played card to file
-
-// playOpponentCard -> read from file current stacks, and decide move for computer
-
-// setPlayedCards -> write to file the played cards for player and computer for that round
-
-// checkWinner -> read current stacks and determine if there is a winner; called after every round
-
-// generateNewCard -> called when player/opponent have three cards left
-
-// get player cards start of game
-// 1. generate random cards for player and opponent
-// 2. store in json file
-// 3. send info
-
-// post player played card
-// 1. get index of card
-// 2. update json for player cards
-// 3. update json for game played card
-
-// get round result
-// 1. check json of cards played by player and opponent
-// 2. check who won
-// 3. store result
-// 4. send result
 
 app.use(express.static(__dirname + "/client/build"));
 
