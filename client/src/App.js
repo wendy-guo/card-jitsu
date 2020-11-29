@@ -47,7 +47,6 @@ const getOpponentCard = async (match_id) => {
   try {
     const res = await fetch(request);
     if (res.status === 200) {
-      console.log(res);
       return res.json();
     }
   } catch (error) {
@@ -57,14 +56,15 @@ const getOpponentCard = async (match_id) => {
 
 /**
  * Get results of this round.
- * @param {String} match_id
  * @param {Card} player
  * @param {Card} opponent
  */
 const getRoundResults = async (player, opponent) => {
   console.log(">:(", player, opponent);
   const request = new Request(
-    `/get-round-result?player=${JSON.stringify(player)}&opponent=${JSON.stringify(opponent)}`,
+    `/get-round-result?player=${JSON.stringify(
+      player
+    )}&opponent=${JSON.stringify(opponent)}`,
     {
       method: "get",
       headers: {
@@ -79,11 +79,26 @@ const getRoundResults = async (player, opponent) => {
     if (res.status === 200) {
       return res.json();
     }
-    const json = undefined;
-    console.log("round result", json);
-    return json;
   } catch (error) {
-    console.log("huhhhhhhhhhhhhhhhh");
+    console.log(error);
+  }
+};
+
+const getDealedCards = async (match_id) => {
+  const request = new Request(`/deal-cards?match_id=${match_id}`, {
+    method: "get",
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json",
+    },
+  });
+
+  try {
+    const res = await fetch(request);
+    if (res.status === 200) {
+      return res.json();
+    }
+  } catch (error) {
     console.log(error);
   }
 };
@@ -130,9 +145,17 @@ function App() {
     setRoundEvaluated(false);
     // make a request to deal card if cards less than 3...then(set playable to true)
     setTimeout(() => {
+      dealCards();
+    }, 1000);
+  };
+
+  const dealCards = () => {
+    getDealedCards(match._id).then((card) => {
+      match.playerCards.push(card);
+      setMatch(match);
       setPlayable(true);
       setPlayableOp(true);
-    }, 1000);
+    });
   };
 
   const evaluateRound = () => {
