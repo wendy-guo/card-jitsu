@@ -1,0 +1,8 @@
+@font-face {
+  font-family: FinkHeavy;
+  src: URL("../assets/FinkHeavy.ttf") format("truetype");
+}
+
+.main-screen {
+  font-family: FinkHeavy;
+}
