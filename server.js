@@ -54,15 +54,17 @@ function getResult(player, opponent) {
 }
 
 function checkWinner(playerStacks, opponentStacks) {
-  // check for player win of all snow cards
+  console.log("-------------\n", opponentStacks, "\n-------\n");
+
   var winning_colours = [];
   var winning_cards = [];
 
+  // check for player win of all snow cards
   for (let i = 0; i < playerStacks.snow.length; i++) {
     if (!winning_colours.includes(playerStacks.snow[i])) {
       winning_colours.push(playerStacks.snow[i]);
       winning_cards.push({ type: "snow", colour: playerStacks.snow[i] });
-
+      console.log("ps", winning_cards);
       if (winning_cards.length == 3) {
         return { winner: "player", cards: winning_cards };
       }
@@ -77,7 +79,7 @@ function checkWinner(playerStacks, opponentStacks) {
     if (!winning_colours.includes(playerStacks.water[i])) {
       winning_colours.push(playerStacks.water[i]);
       winning_cards.push({ type: "water", colour: playerStacks.water[i] });
-
+      console.log(winning_cards);
       if (winning_cards.length == 3) {
         return { winner: "player", cards: winning_cards };
       }
@@ -92,7 +94,7 @@ function checkWinner(playerStacks, opponentStacks) {
     if (!winning_colours.includes(playerStacks.fire[i])) {
       winning_colours.push(playerStacks.fire[i]);
       winning_cards.push({ type: "fire", colour: playerStacks.fire[i] });
-
+      console.log(winning_cards);
       if (winning_cards.length == 3) {
         return { winner: "player", cards: winning_cards };
       }
@@ -104,10 +106,11 @@ function checkWinner(playerStacks, opponentStacks) {
 
   // check for opponent win of all snow cards
   for (let i = 0; i < opponentStacks.snow.length; i++) {
-    if (!winning_colours.includes(playerStacks.snow[i])) {
-      winning_colours.push(playerStacks.snow[i]);
-      winning_cards.push({ type: "snow", colour: playerStacks.snow[i] });
-
+    if (!winning_colours.includes(opponentStacks.snow[i])) {
+      winning_colours.push(opponentStacks.snow[i]);
+      winning_cards.push({ type: "snow", colour: opponentStacks.snow[i] });
+      console.log(winning_cards);
+      console.log(winning_colours);
       if (winning_cards.length == 3) {
         return { winner: "opponent", cards: winning_cards };
       }
@@ -119,10 +122,10 @@ function checkWinner(playerStacks, opponentStacks) {
 
   // check for opponent win of all water cards
   for (let i = 0; i < opponentStacks.water.length; i++) {
-    if (!winning_colours.includes(playerStacks.water[i])) {
-      winning_colours.push(playerStacks.water[i]);
-      winning_cards.push({ type: "water", colour: playerStacks.water[i] });
-
+    if (!winning_colours.includes(opponentStacks.water[i])) {
+      winning_colours.push(opponentStacks.water[i]);
+      winning_cards.push({ type: "water", colour: opponentStacks.water[i] });
+      console.log(winning_cards);
       if (winning_cards.length == 3) {
         return { winner: "opponent", cards: winning_cards };
       }
@@ -134,10 +137,11 @@ function checkWinner(playerStacks, opponentStacks) {
 
   // check for opponent win of all fire cards
   for (let i = 0; i < opponentStacks.fire.length; i++) {
-    if (!winning_colours.includes(playerStacks.fire[i])) {
-      winning_colours.push(playerStacks.fire[i]);
-      winning_cards.push({ type: "fire", colour: playerStacks.fire[i] });
-
+    if (!winning_colours.includes(opponentStacks.fire[i])) {
+      winning_colours.push(opponentStacks.fire[i]);
+      winning_cards.push({ type: "fire", colour: opponentStacks.fire[i] });
+      console.log(winning_cards);
+      console.log(winning_colours);
       if (winning_cards.length == 3) {
         return { winner: "opponent", cards: winning_cards };
       }
@@ -150,7 +154,7 @@ function checkWinner(playerStacks, opponentStacks) {
       if (playerStacks.snow[i] == playerStacks.water[j]) {
         continue;
       }
-      for (let k = 0; j < playerStacks.fire.length; k++) {
+      for (let k = 0; k < playerStacks.fire.length; k++) {
         if (
           playerStacks.snow[i] !== playerStacks.fire[k] &&
           playerStacks.fire[k] !== playerStacks.water[j]
@@ -171,10 +175,12 @@ function checkWinner(playerStacks, opponentStacks) {
   // check for opponent win of different card types
   for (let i = 0; i < opponentStacks.snow.length; i++) {
     for (let j = 0; j < opponentStacks.water.length; j++) {
-      if (opponentStacks.snow[i] == opponentStacks.water[j]) {
-        continue;
-      }
-      for (let k = 0; j < opponentStacks.fire.length; k++) {
+      for (let k = 0; k < opponentStacks.fire.length; k++) {
+        console.log(
+          opponentStacks.snow[i],
+          opponentStacks.water[j],
+          opponentStacks.fire[k]
+        );
         if (
           opponentStacks.snow[i] !== opponentStacks.fire[k] &&
           opponentStacks.fire[k] !== opponentStacks.water[j]
@@ -341,11 +347,17 @@ app.get("/get-winner", (req, res) => {
     res.status(500).send("internal server error");
     return;
   }
+  console.log("\n\ncheck for winner");
+
+  console.log(JSON.parse(req.query.playerStacks));
+  console.log(JSON.parse(req.query.opponentStacks));
 
   var results = checkWinner(
     JSON.parse(req.query.playerStacks),
     JSON.parse(req.query.opponentStacks)
   );
+
+  if (results.winner) console.log(results);
 
   res.send(results);
 });
