@@ -1,8 +1,61 @@
-@font-face {
-  font-family: FinkHeavy;
-  src: URL("../assets/FinkHeavy.ttf") format("truetype");
+.main-screen {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(175, 224, 191);
+  display: flex;
+  flex-direction: column;
+  margin: auto;
 }
 
-.main-screen {
-  font-family: FinkHeavy;
+.title {
+  margin: auto;
+}
+
+.title div span {
+  display: inline-block;
+  color: rgb(255, 206, 59);
+  text-shadow: 3px 3px 2px rgb(59, 31, 4);
+  margin: 0 2px 0 2px;
+}
+
+.title div span:hover {
+  transform: rotate(10deg);
+}
+
+button {
+  margin: 0 auto 10px auto;
+  width: 250px;
+  border-radius: 25px;
+  border: none;
+  background-color: rgb(248, 231, 155);
+  color: rgb(101, 84, 53);
+  font-size: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.button-text {
+  display: inline-block;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+button:hover .button-text {
+  background-color: rgb(238, 191, 52);
+  border-radius: 10px;
+  padding: 0px 8px 0px 8px;
+  transform: rotate(-5deg);
+  transition: 0.2s ease-in-out;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+  color: rgb(101, 84, 53);
 }
