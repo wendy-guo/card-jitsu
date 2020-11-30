@@ -1,10 +1,13 @@
 import "./style.css";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 function SnowCard(props) {
   return (
-    <div className="stack-card" style={{ backgroundColor: props.colour }}>
-      snow
-    </div>
+    <CSSTransition timeout={500} className="snow-card">
+      <div className="stack-card" style={{ backgroundColor: props.colour }}>
+        snow
+      </div>
+    </CSSTransition>
   );
 }
 
