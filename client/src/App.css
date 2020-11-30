@@ -3,12 +3,27 @@
   src: url("./assets/FOT-RodinWanpaku\ Pro\ B.otf") format("opentype");
 }
 
+@import url("https://fonts.googleapis.com/css2?family=Sanchez&display=swap");
+
 * {
   font-family: AnimalCrossing, "Courier new", monospace;
 }
 
+.title div span {
+  font-family: Sanchez, serif;
+  font-size: 100px;
+  font-weight: 600;
+}
+
+body {
+  margin: 0;
+}
+
 .App {
   height: 100vh;
+  margin: auto;
+  width: 100%;
+  justify-content: center;
 }
 
 .stacks-bar {
