@@ -22,28 +22,38 @@ const getDealedCards = async (match_id) => {
 };
 
 function CardBar(props) {
-  const [cards, set] = useState(props.cards);
+  const [cards, setCards] = useState(props.cards);
+  const [played, setPlayed] = useState(-1);
+  const [dealing, setDealing] = useState(false);
+  const [dealt, setDealt] = useState(false);
 
-  const dealCards = (match_id) => {
+  const dealCards = (match_id, empty) => {
     getDealedCards(match_id).then((card) => {
-      cards[cards.findIndex((card) => card === null)] = card;
-      set(cards);
-      console.log("cards have been dealt");
+      setDealt(empty);
+      cards[empty] = card;
+      setCards(cards);
       props.onDealCards();
+      setDealing(false);
     });
   };
 
   const handleCardClick = (i) => {
     if (props.playable) {
+      console.log("playing card...");
+      setPlayed(i);
       props.onCardClick(cards[i]);
-      cards[i] = null;
-      console.log(cards);
-      set(cards);
     }
   };
 
-  if (props.dealCards && cards.includes(null)) {
-    dealCards(props.match);
+  if (props.dealCards && !dealing && played !== -1) {
+    console.log("getting new dealed card");
+    setDealing(true);
+    setTimeout(() => {
+      cards[played] = null;
+      setCards(cards);
+      setPlayed(-1);
+      dealCards(props.match, played);
+    }, 600);
   }
 
   return (
@@ -54,6 +64,8 @@ function CardBar(props) {
           key={i}
           index={i}
           card={card}
+          played={i === played}
+          dealt={i === dealt}
           height="200px"
           width="140px"
           onCardClick={(i) => handleCardClick(i)}
