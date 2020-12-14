@@ -3,13 +3,21 @@ import "./style.css";
 function Card(props) {
   return props.card ? (
     <div
-      className="card"
+      className={
+        props.played
+          ? "card card-leave"
+          : props.dealt
+          ? "card card-enter"
+          : "card"
+      }
       style={{
         borderColor: props.card.colour,
         height: props.height,
         width: props.width,
       }}
-      onClick={() => props.onCardClick(props.index)}
+      onClick={() => {
+        props.onCardClick(props.index);
+      }}
     >
       <div
         className="card-number"
@@ -27,7 +35,10 @@ function Card(props) {
       type {props.card.type}
     </div>
   ) : (
-    <div className="card" style={{ height: props.height, width: props.width, opacity: 0 }}></div>
+    <div
+      className="card"
+      style={{ height: props.height, width: props.width, opacity: 0 }}
+    ></div>
   );
 }
 

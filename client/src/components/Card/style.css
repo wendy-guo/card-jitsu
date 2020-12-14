@@ -3,3 +3,24 @@
   border-radius: 15px;
   background-color: rgb(247, 251, 255);
 }
+
+.card-leave {
+  transition: 0.2s ease-in-out;
+  opacity: 0;
+  transform: translateY(-40px);
+}
+
+.card-enter {
+  animation: 0.4s cardEnter;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
