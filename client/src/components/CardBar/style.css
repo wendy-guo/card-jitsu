@@ -20,23 +20,3 @@
   transition: 0.3s ease-in-out;
   cursor: pointer;
 }
-
-.card-enter {
-  opacity: 0.5;
-  transform: translateY(0px);
-}
-
-.card-enter-active {
-  opacity: 1;
-  transform: translateY(-100px);
-  transition: transform 5s ease-in-out, opacity 2s ease-in;
-}
-
-.card-exit {
-  opacity: 0;
-}
-
-.card-exit-active {
-  opacity: 0;
-  transition: 0s;
-}
