@@ -4,40 +4,40 @@
   justify-content: space-around;
   width: 200px;
   height: 50px;
-  border: 1px solid black;
 }
 
 .stack {
-  width: 50px;
+  width: 60px;
   display: flex;
   flex-direction: column;
-  border: solid grey 1px;
+  overflow: visible;
 }
 
 .stack-card {
-  width: 40px;
-  height: 40px;
-  color: white;
+  display: inline-block;
+  width: 100%;
+  min-height: 60px;
+  color: rgb(172, 32, 32);
+  position: relative;
+  box-sizing: border-box;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  padding: 7px 0px;
 }
 
-.snow-card-enter {
-  opacity: 1;
-  transform: translateX(50px);
+.last {
+  animation: moveUp 0.7s;
 }
 
-.snow-card-enter-active {
-  opacity: 1;
-  transform: translateX(0px);
-  transition: 5s ease-in;
-}
-
-.snow-card-exit {
-  opacity: 1;
-  transform: translateX(50px);
-}
-
-.snow-card-exit-active {
-  opacity: 1;
-  transform: translateX(0px);
-  transition: 5s ease-in;
+@keyframes moveUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
