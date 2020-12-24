@@ -1,0 +1,13 @@
+.win-stack {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  margin: 100px auto;
+  width: 100%;
+}
+
+.win-stack div {
+  width: 80px;
+  height: 80px;
+  margin: 8px;
+}
