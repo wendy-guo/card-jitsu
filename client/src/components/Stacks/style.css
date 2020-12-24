@@ -15,7 +15,7 @@
 
 .stack-card {
   display: inline-block;
-  width: 100%;
+  width: 60px;
   min-height: 60px;
   color: rgb(172, 32, 32);
   position: relative;
@@ -24,7 +24,7 @@
   border-radius: 10px;
   display: flex;
   justify-content: center;
-  padding: 7px 0px;
+  padding: 3px 0px;
 }
 
 .last {
