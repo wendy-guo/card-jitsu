@@ -11,7 +11,7 @@ function Card(props) {
           : "card"
       }
       style={{
-        borderColor: props.card.colour,
+        borderColor: "#".concat(props.card.colour),
         height: props.height,
         width: props.width,
       }}
@@ -22,7 +22,7 @@ function Card(props) {
       <div
         className="card-number"
         style={{
-          backgroundColor: props.card.colour,
+          backgroundColor: "#".concat(props.card.colour),
           borderBottomRightRadius: "10px",
           width: "30px",
           height: "40px",
