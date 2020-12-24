@@ -11,16 +11,16 @@ function MainScreen(props) {
       <div className="title">
         <div>
           <span style={{ transform: "rotate(-10deg) translateY(4px)" }}>C</span>
-          <span style={{ transform: "rotate(7deg) translateY(5px)" }}>a</span>
-          <span style={{ transform: "rotate(4deg) translateY(2px)" }}>r</span>
-          <span style={{ transform: "rotate(-3deg) translateY(1px)" }}>d</span>
+          <span style={{ transform: "rotate(-7deg) translateY(6px)" }}>a</span>
+          <span style={{ transform: "rotate(4deg) translateY(3px)" }}>r</span>
+          <span style={{ transform: "rotate(9deg) translateY(5px)" }}>d</span>
         </div>
         <div>
-          <span style={{ transform: "rotate(-8deg) translateY(3px)" }}>J</span>
-          <span style={{ transform: "rotate(10deg) translateY(1px)" }}>i</span>
-          <span style={{ transform: "rotate(5deg) translateY(4px)" }}>t</span>
-          <span style={{ transform: "rotate(3deg) translateY(0px)" }}>s</span>
-          <span style={{ transform: "rotate(9deg) translateY(5px)" }}>u</span>
+          <span style={{ transform: "rotate(-8deg) translateY(2px)" }}>J</span>
+          <span style={{ transform: "rotate(10deg) translateY(6px)" }}>i</span>
+          <span style={{ transform: "rotate(8deg) translateY(10px)" }}>t</span>
+          <span style={{ transform: "rotate(-5deg) translateY(5px)" }}>s</span>
+          <span style={{ transform: "rotate(5deg) translateY(1px)" }}>u</span>
         </div>
       </div>
       <button onClick={howToPlay()}>
