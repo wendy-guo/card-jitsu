@@ -24,6 +24,7 @@ body {
   margin: auto;
   width: 100%;
   justify-content: center;
+  background-color: rgb(175, 224, 191);
 }
 
 .stacks-bar {
