@@ -15,7 +15,14 @@ const session = require("express-session");
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const card_types = ["snow", "water", "fire"];
-const card_colours = ["red", "green", "blue", "pink", "purple", "orange"];
+const card_colours = [
+  "b83030",
+  "229928",
+  "227199",
+  "f7b5c0",
+  "9987cc",
+  "ffc773",
+];
 
 function isMongoError(error) {
   return (
@@ -296,10 +303,15 @@ app.get("/get-round-result", (req, res) => {
     return;
   }
 
+  console.log(JSON.parse(req.query.player));
+  console.log(JSON.parse(req.query.opponent));
+
   var result = getResult(
     JSON.parse(req.query.player),
     JSON.parse(req.query.opponent)
   );
+  console.log(result);
+
   res.send({ winner: result });
 });
 
