@@ -18,7 +18,7 @@ function PlayedCards(props) {
           card={props.opponentCard}
           height="300px"
           width="210px"
-          onCardClick={(index) => null}
+          onCardClick={(_) => null}
         />
       ) : (
         <div className="placeholder-card"> waiting for opponent </div>
@@ -29,7 +29,7 @@ function PlayedCards(props) {
           card={props.playerCard}
           height="300px"
           width="210px"
-          onCardClick={(index) => -1}
+          onCardClick={(_) => -1}
         />
       ) : (
         <div className="placeholder-card"> play a card </div>
