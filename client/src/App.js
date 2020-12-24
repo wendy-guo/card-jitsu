@@ -5,6 +5,7 @@ import CardBar from "./components/CardBar";
 import PlayedCards from "./components/PlayedCards";
 import MainScreen from "./components/MainScreen";
 import Stacks from "./components/Stacks";
+import WinStack from "./components/WinStack";
 
 /**
  * Start a new match.
@@ -242,8 +243,8 @@ function App() {
             newest={stackNew.player === "player" ? stackNew.type : null}
           />
         </div>
-        {winner ? (
-          <div>{winner} wins!!!!!!!!!!!!!</div>
+        {winner && winningCards ? (
+          <WinStack cards={winningCards} winner={winner} />
         ) : (
           <div>no winner yet</div>
         )}
