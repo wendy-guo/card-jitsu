@@ -6,8 +6,6 @@ import PlayedCards from "./components/PlayedCards";
 import MainScreen from "./components/MainScreen";
 import Stacks from "./components/Stacks";
 
-// requests to backend
-
 /**
  * Start a new match.
  */
@@ -84,25 +82,6 @@ const getRoundResults = async (player, opponent) => {
   }
 };
 
-const getDealedCards = async (match_id) => {
-  const request = new Request(`/deal-cards?match_id=${match_id}`, {
-    method: "get",
-    headers: {
-      Accept: "application/json, text/plain, */*",
-      "Content-Type": "application/json",
-    },
-  });
-
-  try {
-    const res = await fetch(request);
-    if (res.status === 200) {
-      return res.json();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const getWinner = async (playerStacks, opponentStacks) => {
   const request = new Request(
     `/get-winner?playerStacks=${JSON.stringify(
@@ -132,12 +111,15 @@ function App() {
   const [playerCards, setPlayerCards] = useState(null);
   const [opponentPlayedCard, setOpponentPlayedCard] = useState(null);
   const [playerPlayedCard, setPlayerPlayedCard] = useState(null);
+
   const [playerStacks, setPlayerStacks] = useState(null);
   const [opponentStacks, setOpponentStacks] = useState(null);
+  const [stackNew, setStackNew] = useState({ player: null, type: null });
 
   const [playable, setPlayable] = useState(true);
   const [playableOp, setPlayableOp] = useState(true);
   const [roundResult, setRoundResult] = useState(null);
+  const [dealCards, setDealCards] = useState(false);
 
   const [newGame, setNewGame] = useState(null);
   const [roundEvaluated, setRoundEvaluated] = useState(false);
@@ -168,22 +150,10 @@ function App() {
     }
   };
 
-  const resetRound = () => {
-    setRoundResult(null);
-    setRoundEvaluated(false);
-    // make a request to deal card if cards less than 3...then(set playable to true)
-    setTimeout(() => {
-      dealCards();
-    }, 1000);
-  };
-
-  const dealCards = () => {
-    getDealedCards(match).then((card) => {
-      playerCards[playerCards.findIndex((card) => card === null)] = card;
-      setPlayerCards(playerCards);
-      setPlayable(true);
-      setPlayableOp(true);
-    });
+  const handleCardClick = (card) => {
+    setPlayable(false);
+    setPlayerPlayedCard(card);
+    console.log(card, "clicked");
   };
 
   const evaluateRound = () => {
@@ -199,11 +169,19 @@ function App() {
         if (result.winner === "player") {
           playerStacks[playerPlayedCard.type].push(playerPlayedCard.colour);
           setPlayerStacks(playerStacks);
+          setStackNew({
+            type: playerPlayedCard.type,
+            player: "player",
+          });
         } else if (result.winner === "opponent") {
           opponentStacks[opponentPlayedCard.type].push(
             opponentPlayedCard.colour
           );
           setOpponentStacks(opponentStacks);
+          setStackNew({
+            type: opponentPlayedCard.type,
+            player: "opponent",
+          });
         }
         setPlayerPlayedCard(null);
         setOpponentPlayedCard(null);
@@ -222,6 +200,24 @@ function App() {
     }, 1000);
   };
 
+  const resetRound = () => {
+    setRoundResult(null);
+    setRoundEvaluated(false);
+    // make a request to deal card if cards less than 3...then(set playable to true)
+    setTimeout(() => {
+      setDealCards(true);
+      console.log("deal new card");
+      //dealCards();
+    }, 1000);
+  };
+
+  const startNewRound = () => {
+    setDealCards(false);
+    console.log("starting new round");
+    setPlayable(true);
+    setPlayableOp(true);
+  };
+
   setUpCards();
   getOpponentMove(match);
   evaluateRound(playerPlayedCard, opponentPlayedCard);
@@ -233,56 +229,52 @@ function App() {
   };
 
   const getGameScreen = () => {
-    if (match) {
-      return (
-        <div>
-          play a card
-          <div className="stacks-bar">
-            <Stacks stacks={opponentStacks} />
-            <Stacks stacks={playerStacks} />
+    return match ? (
+      <div>
+        play a card
+        <div className="stacks-bar">
+          <Stacks
+            stacks={opponentStacks}
+            newest={stackNew.player === "opponent" ? stackNew.type : null}
+          />
+          <Stacks
+            stacks={playerStacks}
+            newest={stackNew.player === "player" ? stackNew.type : null}
+          />
+        </div>
+        {winner ? (
+          <div>{winner} wins!!!!!!!!!!!!!</div>
+        ) : (
+          <div>no winner yet</div>
+        )}
+        {roundResult ? (
+          <div style={{ fontWeight: "600", color: "pink" }}>
+            {roundResult} wins this round.
           </div>
-          {winner ? (
-            <div>{winner} wins!!!!!!!!!!!!!</div>
-          ) : (
-            <div>no winner yet</div>
-          )}
-          {roundResult ? (
-            <div style={{ fontWeight: "600", color: "pink" }}>
-              {roundResult} wins this round.
-            </div>
-          ) : (
-            <div>nothing</div>
-          )}
-          <PlayedCards
-            id="played-cards"
-            playerCard={playerPlayedCard}
-            opponentCard={opponentPlayedCard}
-          />
-          <CardBar
-            id="card-bar"
-            cards={playerCards}
-            playable={playable}
-            onCardClick={(index) => {
-              if (playable) {
-                setPlayable(false);
-                setPlayerPlayedCard(playerCards[index]);
-                playerCards[index] = null;
-                setPlayerCards(playerCards);
-                console.log(index, "clicked");
-              }
-            }}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div
-          style={{ width: "500px", height: "500px", backgroundColor: "red" }}
-        >
-          loading
-        </div>
-      );
-    }
+        ) : (
+          <div>nothing</div>
+        )}
+        <PlayedCards
+          id="played-cards"
+          playerCard={playerPlayedCard}
+          opponentCard={opponentPlayedCard}
+        />
+        <CardBar
+          id="card-bar"
+          match={match}
+          cards={playerCards}
+          playable={playable}
+          newCard={!playerCards.includes(null)}
+          onCardClick={(card) => handleCardClick(card)}
+          dealCards={dealCards}
+          onDealCards={startNewRound}
+        />
+      </div>
+    ) : (
+      <div style={{ width: "500px", height: "500px", backgroundColor: "red" }}>
+        loading
+      </div>
+    );
   };
 
   return (
