@@ -1,6 +1,5 @@
 .card-bar {
   width: 95%;
-  border: solid 2px rgb(255, 230, 230);
   display: flex;
   flex-direction: row;
   height: 300px;
