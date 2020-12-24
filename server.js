@@ -16,12 +16,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const card_types = ["snow", "water", "fire"];
 const card_colours = [
-  "b83030",
-  "229928",
-  "227199",
-  "f7b5c0",
-  "9987cc",
-  "ffc773",
+  "d95252", // red
+  "71bf60", // green
+  "a1e9ff", // blue
+  "ffd4d4", // pink
+  "9987cc", // purple
+  "ffc773", // orange
 ];
 
 function isMongoError(error) {
