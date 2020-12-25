@@ -198,7 +198,7 @@ function App() {
           }
         });
       });
-    }, 1000);
+    }, 1500);
   };
 
   const resetRound = () => {
@@ -245,9 +245,7 @@ function App() {
         </div>
         {winner && winningCards ? (
           <WinStack cards={winningCards} winner={winner} />
-        ) : (
-          <div>no winner yet</div>
-        )}
+        ) : null}
         {roundResult ? (
           <div style={{ fontWeight: "600", color: "pink" }}>
             {roundResult} wins this round.
@@ -259,6 +257,7 @@ function App() {
           id="played-cards"
           playerCard={playerPlayedCard}
           opponentCard={opponentPlayedCard}
+          reveal={roundEvaluated}
         />
         <CardBar
           id="card-bar"
