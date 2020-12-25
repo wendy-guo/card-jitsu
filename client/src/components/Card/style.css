@@ -1,7 +1,7 @@
 .card {
   border: 10px solid;
   border-radius: 15px;
-  background-color: rgb(247, 251, 255);
+  background-color: rgb(249, 255, 198);
 }
 
 .card-leave {
@@ -23,4 +23,10 @@
     opacity: 1;
     transform: translateY(0px);
   }
+}
+
+.villager-image {
+  margin-right: 10%;
+  bottom: 75px;
+  position: relative;
 }
