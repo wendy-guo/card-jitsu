@@ -14,6 +14,13 @@ const { User } = require("./models/user");
 const session = require("express-session");
 app.use(bodyParser.urlencoded({ extended: true }));
 
+mongoose.connect(
+  process.env.MONGOLAB_URI ||
+    process.env.MONGODB_URI ||
+    "mongodb://localhost:27017/Card-Jitsu",
+  { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
+);
+
 const card_types = ["snow", "water", "fire"];
 const card_colours = [
   "d95252", // red
