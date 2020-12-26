@@ -265,11 +265,7 @@ function App() {
           onDealCards={startNewRound}
         />
       </div>
-    ) : (
-      <div style={{ width: "500px", height: "500px", backgroundColor: "red" }}>
-        loading
-      </div>
-    );
+    ) : null;
   };
 
   return (
