@@ -1,13 +1,19 @@
 .win-stack {
   position: fixed;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin: 100px auto;
   width: 100%;
 }
 
-.win-stack div {
+.win-stack div div {
   width: 80px;
   height: 80px;
   margin: 8px;
+}
+
+.result {
+  font-size: 30px;
+  margin: auto;
 }
