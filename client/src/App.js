@@ -232,7 +232,6 @@ function App() {
   const getGameScreen = () => {
     return match ? (
       <div>
-        play a card
         <div className="stacks-bar">
           <Stacks
             stacks={opponentStacks}
@@ -246,13 +245,9 @@ function App() {
         {winner && winningCards ? (
           <WinStack cards={winningCards} winner={winner} />
         ) : null}
-        {roundResult ? (
-          <div style={{ fontWeight: "600", color: "pink" }}>
-            {roundResult} wins this round.
-          </div>
-        ) : (
-          <div>nothing</div>
-        )}
+        {
+          // do something with roundresult
+        }
         <PlayedCards
           id="played-cards"
           playerCard={playerPlayedCard}
