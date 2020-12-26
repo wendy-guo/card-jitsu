@@ -11,12 +11,6 @@ const { Card } = require("./models/card");
 const { Stack } = require("./models/stack");
 const { User } = require("./models/user");
 
-mongoose.connect(
-  "mongodb+srv://wendy:foJX6oTOtREPfekG@cluster0.cgpjz.mongodb.net/test?authSource=admin&replicaSet=atlas-12ab6p-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
-  { useNewUrlParser: true, useUnifiedTopology: true },
-  () => console.log("Mongoose DB running")
-);
-
 const session = require("express-session");
 app.use(bodyParser.urlencoded({ extended: true }));
 
