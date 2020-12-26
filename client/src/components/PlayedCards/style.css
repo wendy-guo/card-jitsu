@@ -1,3 +1,15 @@
+.played-cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 100%;
+  margin: 0px auto 60px auto;
+}
+
+.played-cards > div {
+  margin: 0px 100px;
+}
+
 .placeholder-card {
   height: 320px;
   width: 230px;
