@@ -3,7 +3,7 @@
   flex-direction: row;
   justify-content: center;
   height: 100%;
-  margin: 0px auto 60px auto;
+  margin: 20px auto 60px auto;
 }
 
 .played-cards > div {

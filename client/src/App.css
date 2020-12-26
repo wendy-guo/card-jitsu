@@ -25,7 +25,8 @@ body {
   width: 100%;
   justify-content: center;
   background-color: rgb(175, 224, 191);
-  /*overflow: hidden;*/
+  padding-top: 25px;
+  overflow: hidden;
 }
 
 .stacks-bar {
