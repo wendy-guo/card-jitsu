@@ -221,12 +221,13 @@ app.use(
  * Start a new match of card-jitsu.
  */
 app.get("/start-match", (req, res) => {
-  if (mongoose.connection.readyState != 1) {
-    console.log("issue with mongoose connection");
-    console.log(mongoose.connection);
-    res.status(500).send("internal server error");
-    return;
-  }
+
+  // if (mongoose.connection.readyState != 1) {
+  //   console.log("issue with mongoose connection");
+  //   console.log(mongoose.connection);
+  //   res.status(500).send("internal server error");
+  //   return;
+  // }
 
   var playerCards = [];
   var opponentCards = [];
