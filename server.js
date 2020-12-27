@@ -14,6 +14,18 @@ const { User } = require("./models/user");
 const session = require("express-session");
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const MongoClient = require("mongodb").MongoClient;
+const uri =
+  "mongodb+srv://wendy:foJX6oTOtREPfekG@cluster0.pdj9z.mongodb.net/card-jitsu?retryWrites=true&w=majority";
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+client.connect((err) => {
+  const collection = client.db("test").collection("devices");
+  client.close();
+});
+
 const card_types = ["snow", "water", "fire"];
 const card_colours = [
   "d95252", // red
@@ -221,13 +233,12 @@ app.use(
  * Start a new match of card-jitsu.
  */
 app.get("/start-match", (req, res) => {
-
-  // if (mongoose.connection.readyState != 1) {
-  //   console.log("issue with mongoose connection");
-  //   console.log(mongoose.connection);
-  //   res.status(500).send("internal server error");
-  //   return;
-  // }
+  if (mongoose.connection.readyState != 1) {
+    console.log("issue with mongoose connection");
+    console.log(mongoose.connection);
+    res.status(500).send("internal server error");
+    return;
+  }
 
   var playerCards = [];
   var opponentCards = [];
