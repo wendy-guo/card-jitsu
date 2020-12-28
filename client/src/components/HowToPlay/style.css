@@ -12,3 +12,7 @@
   font-size: 20px;
   color: rgb(101, 84, 53);
 }
+
+.carousel-indicators {
+  bottom: -80px;
+}
