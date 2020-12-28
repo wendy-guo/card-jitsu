@@ -51,6 +51,7 @@ button:hover .button-text {
 
 a {
   text-decoration: none;
+  color: rgb(101, 84, 53);
 }
 
 a:visited {
