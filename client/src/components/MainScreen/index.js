@@ -23,8 +23,10 @@ function MainScreen(props) {
           <span style={{ transform: "rotate(5deg) translateY(1px)" }}>u</span>
         </div>
       </div>
-      <button onClick={howToPlay()}>
-        <span className="button-text">how to play</span>
+      <button>
+        <NavLink to="/how-to-play">
+          <span className="button-text">how to play</span>
+        </NavLink>
       </button>
 
       <button onClick={props.onStartClick} style={{ marginBottom: "100px" }}>
