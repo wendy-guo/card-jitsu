@@ -26,7 +26,7 @@ function Page(props) {
           display: "flex",
           justifyContent: "center",
           width: "100%",
-          height: "500px",
+          height: "200px",
         }}
       >
         <div
