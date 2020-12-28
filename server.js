@@ -17,10 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const card_types = ["snow", "water", "fire"];
 const card_colours = [
   "d95252", // red
-  "71bf60", // green
+  "b1e490", // green
   "a1e9ff", // blue
   "ffd4d4", // pink
-  "9987cc", // purple
+  "ab86b6", // purple
   "ffc773", // orange
 ];
 
