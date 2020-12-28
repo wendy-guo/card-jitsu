@@ -1,0 +1,14 @@
+.instructions {
+  height: 100%;
+}
+
+.dialogue-box {
+  margin: auto;
+  width: 49%;
+  height: 100%;
+  background-repeat: no-repeat;
+  text-align: center;
+  padding: 50px 40px;
+  font-size: 20px;
+  color: rgb(101, 84, 53);
+}
