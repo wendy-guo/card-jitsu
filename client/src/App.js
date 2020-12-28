@@ -4,6 +4,7 @@ import "./App.css";
 import CardBar from "./components/CardBar";
 import PlayedCards from "./components/PlayedCards";
 import MainScreen from "./components/MainScreen";
+import HowToPlay from "./components/HowToPlay";
 import Stacks from "./components/Stacks";
 import WinStack from "./components/WinStack";
 
@@ -223,9 +224,7 @@ function App() {
   getOpponentMove(match);
   evaluateRound(playerPlayedCard, opponentPlayedCard);
 
-  // front end stuff
   const getMainScreen = () => {
-    console.log("getting main screen");
     return <MainScreen onStartClick={() => setNewGame(true)} />;
   };
 
@@ -268,12 +267,17 @@ function App() {
     ) : null;
   };
 
+  const getHowToPlay = () => {
+    return <HowToPlay />;
+  };
+
   return (
     <div className="App">
       <BrowserRouter>
         <Switch>
           <Route path="/" render={getMainScreen} exact />
           <Route path="/match" render={getGameScreen} exact />
+          <Route path="/how-to-play" render={getHowToPlay} exact />
         </Switch>
       </BrowserRouter>
     </div>
