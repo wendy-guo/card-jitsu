@@ -43,7 +43,7 @@ const getVillager = (colour, height, width) => {
           alt="ruby"
         />
       );
-    case "9987cc": // purple
+    case "ab86b6": // purple
       return (
         <img
           class="villager-image"
