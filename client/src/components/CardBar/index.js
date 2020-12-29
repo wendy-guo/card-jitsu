@@ -66,8 +66,8 @@ function CardBar(props) {
           card={card}
           played={i === played}
           dealt={i === dealt}
-          height="200px"
-          width="140px"
+          height="240px"
+          width="168px"
           onCardClick={(i) => handleCardClick(i)}
         />
       ))}
