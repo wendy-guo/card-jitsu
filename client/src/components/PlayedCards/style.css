@@ -48,8 +48,6 @@
   transform: rotateY(180deg);
 }
 .card-back {
-  height: 300px;
-  width: 210px;
   background-color: rgb(40, 60, 116);
   border: 10px solid rgb(255, 255, 255);
   border-radius: 15px;

@@ -30,3 +30,8 @@
   bottom: 75px;
   position: relative;
 }
+
+img,
+svg {
+  vertical-align: inherit !important;
+}
